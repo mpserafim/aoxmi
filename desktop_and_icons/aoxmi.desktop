@@ -1,8 +1,8 @@
 [Desktop Entry]
-Name=OpenXenManager
-Comment=Manage XenServer installations
+Name=aoxmi
+Comment=Another Opensource XenServer Management Interface
 Categories=System;
-Exec=openxenmanager
+Exec=aoxmi
 Terminal=false
 Type=Application
 Icon=xen
