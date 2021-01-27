@@ -1,8 +1,7 @@
 # -----------------------------------------------------------------------
-# OpenXenManager
+# aoxmi
 #
-# Copyright (C) 2009 Alberto Gonzalez Rodriguez alberto@pesadilla.org
-# Copyright (C) 2014 Daniel Lintott <daniel@serverb.co.uk>
+# Copyright (C) 2021 mpserafim <mpserafim@mps.eti.br>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -16,7 +15,8 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,
+# USA.
 #
 # -----------------------------------------------------------------------
 
@@ -153,8 +153,8 @@ class RRD:
                         i = i + 1
         return self.rrdinfo["ds"]
 """
-window = gtk.Window()
-window.connect("destroy", gtk.main_quit)
+window = Gtk.Window()
+window.connect("destroy", Gtk.main_quit)
 window.resize(500, 300)
 window.set_size_request(500, 200)
 
@@ -211,13 +211,13 @@ for key in rrdinfo.keys():
 chart.set_yrange((0, max_value))
 
 
-scrolled = gtk.ScrolledWindow()
-viewport = gtk.Viewport()
+scrolled = Gtk.ScrolledWindow()
+viewport = Gtk.Viewport()
 chart.set_size_request(len(data)*10, 200)
 scrolled.add(viewport)
 chart2 = chart
 scrolled.add_with_viewport(chart)
 window.add(scrolled)
 window.show_all()
-gtk.main()
+Gtk.main()
 """

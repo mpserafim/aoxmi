@@ -1,8 +1,7 @@
 # -----------------------------------------------------------------------
-# OpenXenManager
+# aoxmi
 #
-# Copyright (C) 2009 Alberto Gonzalez Rodriguez alberto@pesadilla.org
-# Copyright (C) 2014 Daniel Lintott <daniel@serverb.co.uk>
+# Copyright (C) 2021 mpserafim <mpserafim@mps.eti.br>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -20,7 +19,7 @@
 # USA.
 #
 # -----------------------------------------------------------------------
-import gtk
+from gi.repository import Gtk
 import xml.dom.minidom
 
 from OXM.utils import bytes_to_gb
@@ -108,7 +107,7 @@ class oxcSERVERnewvm:
         other_config = self.all['vms'][data['ref']]['other_config']
         other_config["default_template"] = "false"
         selection = self.wine.builder.get_object("treenewvmstorage").get_selection()
-        selection.set_mode(gtk.SELECTION_MULTIPLE)
+        selection.set_mode(Gtk.SelectionMode.MULTIPLE)
         selection.select_all()
         model, selected = selection.get_selected_rows()
         iters = [model.get_iter(path) for path in selected]
@@ -189,7 +188,7 @@ class oxcSERVERnewvm:
             self.connection.VBD.insert(self.session_uuid, res['Value'], data['vdi'])
 
         selection = self.wine.builder.get_object("treenewvmnetwork").get_selection()
-        selection.set_mode(gtk.SELECTION_MULTIPLE)
+        selection.set_mode(Gtk.SelectionMode.MULTIPLE)
         selection.select_all()
         model, selected = selection.get_selected_rows()
         iters = [model.get_iter(path) for path in selected]

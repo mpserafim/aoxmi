@@ -1,8 +1,7 @@
 # -----------------------------------------------------------------------
-# OpenXenManager
+# aoxmi
 #
-# Copyright (C) 2009 Alberto Gonzalez Rodriguez alberto@pesadilla.org
-# Copyright (C) 2014 Daniel Lintott <daniel@serverb.co.uk>
+# Copyright (C) 2021 mpserafim <mpserafim@mps.eti.br>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -16,12 +15,13 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,
+# USA.
 #
 # -----------------------------------------------------------------------
 from os import path
 import utils
-import gtk
+from gi.repository import Gtk
 
 
 class oxcWindowAlerts:
@@ -63,7 +63,7 @@ class oxcWindowAlerts:
         Callback for the response from Dismiss all confirmation dialog
         """
         dialog.hide()
-        if response == gtk.RESPONSE_YES:
+        if response == Gtk.ResponseType.YES:
             # Response Yes
             self.listalerts.foreach(self.dismiss_all, "")
             # Clear list

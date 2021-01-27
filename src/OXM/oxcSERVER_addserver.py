@@ -1,8 +1,7 @@
 # -----------------------------------------------------------------------
-# OpenXenManager
+# aoxmi
 #
-# Copyright (C) 2009 Alberto Gonzalez Rodriguez alberto@pesadilla.org
-# Copyright (C) 2014 Daniel Lintott <daniel@serverb.co.uk>
+# Copyright (C) 2021 mpserafim <mpserafim@mps.eti.br>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -23,22 +22,25 @@
 import xmlrpclib
 import sys
 from threading import Thread
-import gobject
+from gi.repository import GObject
 
 
-class oxcSERVERaddserver(gobject.GObject):
+class oxcSERVERaddserver(GObject.GObject):
     __gsignals__ = {
-        "connect-success": (gobject.SIGNAL_RUN_FIRST, None, ()),
-        "connect-failure": (gobject.SIGNAL_RUN_FIRST, None, (str,)),
-        "sync-progress": (gobject.SIGNAL_RUN_FIRST, None, (str,)),
-        "sync-success": (gobject.SIGNAL_RUN_FIRST, None, ()),
-        "sync-failure": (gobject.SIGNAL_RUN_FIRST, None, (str,))
+        "connect-success": (GObject.SignalFlags.RUN_FIRST, None, ()),
+        "connect-failure": (GObject.SignalFlags.RUN_FIRST, None, (str,)),
+        "sync-progress": (GObject.SignalFlags.RUN_FIRST, None, (str,)),
+        "sync-success": (GObject.SignalFlags.RUN_FIRST, None, ()),
+        "sync-failure": (GObject.SignalFlags.RUN_FIRST, None, (str,))
     }
 
     connectThread = None
 
     def __init__(self, *args, **kwargs):
-        self.__gobject_init__()
+#        self.__gobject_init__()
+#        Gtk.Window.__init__(self)
+        GObject.GObject.__init__(self)
+        GObject.type_register(oxcSERVERaddserver)
         self.all = {}
 
     def connect_server_async(self):

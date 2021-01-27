@@ -1,8 +1,7 @@
 # -----------------------------------------------------------------------
-# OpenXenManager
+# aoxmi
 #
-# Copyright (C) 2009 Alberto Gonzalez Rodriguez alberto@pesadilla.org
-# Copyright (C) 2014 Daniel Lintott <daniel@serverb.co.uk>
+# Copyright (C) 2021 mpserafim <mpserafim@mps.eti.br>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -16,11 +15,12 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,
+# USA.
 #
 # -----------------------------------------------------------------------
 import re
-import gtk
+from gi.repository import Gtk
 
 
 class oxcWindowStorage:
@@ -623,7 +623,7 @@ class oxcWindowStorage:
                      "radionewstgcifs": "Select this option if you have a library of VM installation ISO images available as a Windows File Sharing share that you wish to attach to your host or pool.",
                      "radionewstgnfsiso": "Select this option if you have a library of VM installation ISO images available as a NFS share that you wish to attach to your host or pool.",
                      "radionewstgaoe": "ATA over Ethernet (AoE) is a network protocol designed for simple, high-performance access of SATA storage devices over Ethernet networks. It gives the possibility to build SANs with low-cost, standard technologies."}
-            name = gtk.Buildable.get_name(widget)
+            name = Gtk.Buildable.get_name(widget)
             # Set the info text
             self.builder.get_object("newstorageinfo").set_text(texts[name])
 

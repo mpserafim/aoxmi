@@ -1,8 +1,7 @@
 # -----------------------------------------------------------------------
-# OpenXenManager
+# aoxmi
 #
-# Copyright (C) 2009 Alberto Gonzalez Rodriguez alberto@pesadilla.org
-# Copyright (C) 2014 Daniel Lintott <daniel@serverb.co.uk>
+# Copyright (C) 2021 mpserafim <mpserafim@mps.eti.br>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -21,7 +20,7 @@
 #
 # -----------------------------------------------------------------------
 from os import path
-import gtk
+from gi.repository import Gtk
 from threading import Thread
 from oxcSERVER_host_nics import *
 from oxcSERVER_host_network import *
@@ -117,7 +116,7 @@ class oxcSERVERhost(oxcSERVERhostnics, oxcSERVERhostnetwork):
             self.session_uuid, ref)["Value"]
         for vm in vms.keys():
             # vms[vm][0]
-            list.append([gtk.gdk.pixbuf_new_from_file(path.join(
+            list.append([GdkPixbuf.Pixbuf.new_from_file(path.join(
                 utils.module_path(), "images/tree_running_16.png")),
                 self.all['vms'][vm]['name_label'],
                 "Suspend or shutdown VM"])
@@ -250,18 +249,18 @@ class oxcSERVERhost(oxcSERVERhostnics, oxcSERVERhostnetwork):
             self.add_box_hardware(key, relation[key])
 
     def add_box_hardware(self, title, text):
-        vboxframe = gtk.Frame()
-        vboxframe.modify_bg(gtk.STATE_NORMAL, gtk.gdk.color_parse("white"))
-        vboxchild = gtk.Fixed()
-        vboxevent = gtk.EventBox()
-        vboxevent.modify_bg(gtk.STATE_NORMAL, gtk.gdk.color_parse("white"))
+        vboxframe = Gtk.Frame()
+        vboxframe.modify_bg(Gtk.StateType.NORMAL, Gdk.color_parse("white"))
+        vboxchild = Gtk.Fixed()
+        vboxevent = Gtk.EventBox()
+        vboxevent.modify_bg(Gtk.StateType.NORMAL, Gdk.color_parse("white"))
         vboxevent.add(vboxchild)
         vboxframe.add(vboxevent)
-        vboxchildlabel1 = gtk.Label()
+        vboxchildlabel1 = Gtk.Label()
         vboxchildlabel1.set_selectable(True)
         vboxchildlabel1.set_markup("<b>" + title + "</b>")
         vboxchild.put(vboxchildlabel1, 5, 5)
-        vboxchildlabel2 = gtk.Label()
+        vboxchildlabel2 = Gtk.Label()
         vboxchildlabel2.set_selectable(True)
         vboxchildlabel2.set_text('\n'.join(text) + "\n")
         vboxchild.put(vboxchildlabel2, 5, 35)

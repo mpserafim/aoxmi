@@ -1,8 +1,7 @@
 # -----------------------------------------------------------------------
-# OpenXenManager
+# aoxmi
 #
-# Copyright (C) 2009 Alberto Gonzalez Rodriguez alberto@pesadilla.org
-# Copyright (C) 2014 Daniel Lintott <daniel@serverb.co.uk>
+# Copyright (C) 2021 mpserafim <mpserafim@mps.eti.br>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -16,10 +15,11 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,
+# USA.
 #
 # -----------------------------------------------------------------------
-import gtk
+from gi.repository import Gtk
 from os import path
 import utils
 
@@ -95,7 +95,7 @@ class oxcSERVERvmstorage:
         for sr in all_sr:
             if all_sr[sr]['type'] != "iso" \
                     and all_sr[sr]['content_type'] != "iso":
-                img = gtk.gdk.pixbuf_new_from_file(path.join(
+                img = GdkPixbuf.Pixbuf.new_from_file(path.join(
                     utils.module_path(), "images/storage_default_16.png"))
                 refattachdisk[sr] = list.append(
                     None, [img, sr, all_sr[sr]["name_label"], "", False])
@@ -104,7 +104,7 @@ class oxcSERVERvmstorage:
             self.session_uuid)['Value']
         for vdi in all_vdi:
             if not all_vdi[vdi]['VBDs'] and all_vdi[vdi]['read_only'] is False:
-                img = gtk.gdk.pixbuf_new_from_file(path.join(
+                img = GdkPixbuf.Pixbuf.new_from_file(path.join(
                     utils.module_path(), "images/user_template_16.png"))
                 name_str = "%s - %s" % (
                     all_vdi[vdi]['name_description'],

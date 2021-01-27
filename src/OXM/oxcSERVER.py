@@ -1,9 +1,7 @@
 # -----------------------------------------------------------------------
-# OpenXenManager
+# aoxmi
 #
-# Copyright (C) 2009 Alberto Gonzalez Rodriguez alberto@pesadilla.org
-# Copyright (C) 2011 Cheng Sun <chengsun9@gmail.com>
-# Copyright (C) 2014 Daniel Lintott <daniel@serverb.co.uk>
+# Copyright (C) 2021 mpserafim <mpserafim@mps.eti.br>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -18,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,
-#  USA.
+# USA.
 #
 # -----------------------------------------------------------------------
 # System Imports
@@ -30,6 +28,9 @@ import time
 import urllib
 import socket
 import ssl
+import gi
+from gi.repository import Gdk
+from gi.repository import GdkPixbuf
 
 # Local Imports
 from messages import get_msg
@@ -41,7 +42,7 @@ from oxcSERVER_alerts import *
 from oxcSERVER_addserver import *
 from oxcSERVER_newvm import *
 from oxcSERVER_menuitem import *
-from pygtk_chart import line_chart
+#from pygtk_chart import line_chart
 from rrd import RRD, XPORT
 import put
 import rrdinfo
@@ -268,7 +269,7 @@ class oxcSERVER(oxcSERVERvm, oxcSERVERhost, oxcSERVERproperties,
             msg = get_msg(message['name'])
             if msg:
                 parent = list.prepend(None,
-                                      [gtk.gdk.pixbuf_new_from_file(
+                                      [GdkPixbuf.Pixbuf.new_from_file(
                                           utils.image_path("info.gif")),
                                        self.hostname, msg['header'],
                                        str(self.format_date(
@@ -278,7 +279,7 @@ class oxcSERVER(oxcSERVERvm, oxcSERVERhost, oxcSERVERproperties,
                                       "", ref, self.host])
             else:
                 parent = list.prepend(None,
-                                      [gtk.gdk.pixbuf_new_from_file(
+                                      [GdkPixbuf.Pixbuf.new_from_file(
                                           utils.image_path("info.gif")),
                                        self.hostname, message['name'],
                                        str(self.format_date(
@@ -305,7 +306,7 @@ class oxcSERVER(oxcSERVERvm, oxcSERVERhost, oxcSERVERproperties,
                 msg = get_msg('alert_' + alert)
                 if msg:
                     parent = list.prepend(None,
-                                          [gtk.gdk.pixbuf_new_from_file(
+                                          [GdkPixbuf.Pixbuf.new_from_file(
                                               utils.image_path("warn.gif")),
                                            self.hostname, msg['header'],
                                            str(self.format_date(
@@ -326,7 +327,7 @@ class oxcSERVER(oxcSERVERvm, oxcSERVERhost, oxcSERVERproperties,
                 if msg:
                     parent = list.prepend(
                         None,
-                        [gtk.gdk.pixbuf_new_from_file(
+                        [GdkPixbuf.Pixbuf.new_from_file(
                             utils.image_path("warn.gif")),
                          self.hostname, msg['header'] % "Control Domain",
                          str(self.format_date(str(message['timestamp']))),
@@ -343,7 +344,7 @@ class oxcSERVER(oxcSERVERvm, oxcSERVERhost, oxcSERVERproperties,
                 and self.all['vms'][vm]['resident_on'] in self.hostroot:
             resident = self.all['vms'][vm]['resident_on']
             self.treestore.prepend(self.hostroot[resident], [
-                gtk.gdk.pixbuf_new_from_file(
+                GdkPixbuf.Pixbuf.new_from_file(
                     utils.image_path("tree_%s_16.png" %
                                      self.all['vms'][vm]['power_state'].lower())),
                 self.all['vms'][vm]['name_label'], self.all['vms'][vm]['uuid'],
@@ -355,7 +356,7 @@ class oxcSERVER(oxcSERVERvm, oxcSERVERhost, oxcSERVERproperties,
                 and self.all['vms'][vm]['affinity'] in self.hostroot:
             affinity = self.all['vms'][vm]['affinity']
             self.treestore.prepend(self.hostroot[affinity], [
-                gtk.gdk.pixbuf_new_from_file(
+                GdkPixbuf.Pixbuf.new_from_file(
                     utils.image_path("tree_%s_16.png" %
                                      self.all['vms'][vm]['power_state'].lower())),
                 self.all['vms'][vm]['name_label'], self.all['vms'][vm]['uuid'], "vm",
@@ -365,7 +366,7 @@ class oxcSERVER(oxcSERVERvm, oxcSERVERhost, oxcSERVERproperties,
         else:
             if self.poolroot:
                 self.treestore.prepend(self.poolroot, [
-                    gtk.gdk.pixbuf_new_from_file(
+                    GdkPixbuf.Pixbuf.new_from_file(
                         utils.image_path(
                             "tree_%s_16.png" %
                             self.all['vms'][vm]['power_state'].lower())),
@@ -375,7 +376,7 @@ class oxcSERVER(oxcSERVERvm, oxcSERVERhost, oxcSERVERproperties,
             else:
                 self.treestore.prepend(
                     self.hostroot[self.all['host'].keys()[0]],
-                    [gtk.gdk.pixbuf_new_from_file(utils.image_path(
+                    [GdkPixbuf.Pixbuf.new_from_file(utils.image_path(
                         "tree_%s_16.png" % self.all['vms'][vm]['power_state'].lower())),
                      self.all['vms'][vm]['name_label'], self.all['vms'][vm]['uuid'],
                      "vm", self.all['vms'][vm]['power_state'], self.host,
@@ -470,9 +471,9 @@ class oxcSERVER(oxcSERVERvm, oxcSERVERhost, oxcSERVERproperties,
         #for widget in ["scrwin_cpuusage", "scrwin_memusage", "scrwin_netusage", "scrwin_diskusage"]:
         # widget = self.wine.builder.get_object(widget).get_children()[0]
         # if widget.get_children():
-        #     gtk.gdk.threads_enter()
+        #     Gdk.threads_enter()
         #     widget.remove(widget.get_children()[0])
-        #     gtk.gdk.threads_leave()
+        #     Gdk.threads_leave()
 
         if host:
             data_sources = self.connection.host.get_data_sources(self.session_uuid, ref)
@@ -558,8 +559,8 @@ class oxcSERVER(oxcSERVERvm, oxcSERVERhost, oxcSERVERproperties,
                 chart["cpu"].add_graph(graph[key])
 
         chart["cpu"].set_size_request(len(data)*20, 250)
-        gobject.idle_add(lambda: self.wine.builder.get_object("scrwin_cpuusage").add(chart["cpu"]) and False)
-        gobject.idle_add(lambda: self.wine.builder.get_object("scrwin_cpuusage").show_all() and False)
+        GObject.idle_add(lambda: self.wine.builder.get_object("scrwin_cpuusage").add(chart["cpu"]) and False)
+        GObject.idle_add(lambda: self.wine.builder.get_object("scrwin_cpuusage").show_all() and False)
 
         # Memory
         if "memory_internal_free" in rrdinfo and "memory" in rrdinfo:
@@ -574,8 +575,8 @@ class oxcSERVER(oxcSERVERvm, oxcSERVERhost, oxcSERVERproperties,
             chart["mem"].add_graph(graph["mem"])
             chart["mem"].set_size_request(len(data)*20, 250)
 
-            gobject.idle_add(lambda: self.wine.builder.get_object("scrwin_memusage").add(chart["mem"]) and False)
-            gobject.idle_add(lambda: self.wine.builder.get_object("scrwin_memusage").show_all() and False)
+            GObject.idle_add(lambda: self.wine.builder.get_object("scrwin_memusage").add(chart["mem"]) and False)
+            GObject.idle_add(lambda: self.wine.builder.get_object("scrwin_memusage").show_all() and False)
         elif "memory_total_kib" in rrdinfo \
                 and "xapi_free_memory_kib" in rrdinfo:
             chart["mem"].set_yrange(
@@ -589,14 +590,14 @@ class oxcSERVER(oxcSERVERvm, oxcSERVERhost, oxcSERVERproperties,
             chart["mem"].add_graph(graph["mem"])
             chart["mem"].set_size_request(len(data)*20, 250)
 
-            gobject.idle_add(lambda: self.wine.builder.get_object("scrwin_memusage").add(chart["mem"]) and False)
-            gobject.idle_add(lambda: self.wine.builder.get_object("scrwin_memusage").show_all() and False)
+            GObject.idle_add(lambda: self.wine.builder.get_object("scrwin_memusage").add(chart["mem"]) and False)
+            GObject.idle_add(lambda: self.wine.builder.get_object("scrwin_memusage").show_all() and False)
 
         else:
-            label = gtk.Label()
+            label = Gtk.Label()
             label.set_markup("<b>No data available</b>")
-            gobject.idle_add(lambda: self.wine.builder.get_object("scrwin_memusage").add(label) and False)
-            gobject.idle_add(lambda: self.wine.builder.get_object("scrwin_memusage").show_all() and False)
+            GObject.idle_add(lambda: self.wine.builder.get_object("scrwin_memusage").add(label) and False)
+            GObject.idle_add(lambda: self.wine.builder.get_object("scrwin_memusage").show_all() and False)
 
         # Network
         max_value = 0
@@ -615,13 +616,13 @@ class oxcSERVER(oxcSERVERvm, oxcSERVERhost, oxcSERVERproperties,
             chart["vif"].set_yrange((0, max_value))
             chart["vif"].set_size_request(len(data)*20, 250)
 
-            gobject.idle_add(lambda: self.wine.builder.get_object("scrwin_netusage").add(chart["vif"]) and False)
-            gobject.idle_add(lambda: self.wine.builder.get_object("scrwin_netusage").show_all() and False)
+            GObject.idle_add(lambda: self.wine.builder.get_object("scrwin_netusage").add(chart["vif"]) and False)
+            GObject.idle_add(lambda: self.wine.builder.get_object("scrwin_netusage").show_all() and False)
         else:
-            label = gtk.Label()
+            label = Gtk.Label()
             label.set_markup("<b>No data available</b>")
-            gobject.idle_add(lambda: self.wine.builder.get_object("scrwin_netusage").add(label) and False)
-            gobject.idle_add(lambda: self.wine.builder.get_object("scrwin_netusage").show_all() and False)
+            GObject.idle_add(lambda: self.wine.builder.get_object("scrwin_netusage").add(label) and False)
+            GObject.idle_add(lambda: self.wine.builder.get_object("scrwin_netusage").show_all() and False)
 
         # Disk
         if not host:
@@ -641,13 +642,13 @@ class oxcSERVER(oxcSERVERvm, oxcSERVERhost, oxcSERVERproperties,
             chart["vbd"].set_yrange((0, max_value))
             chart["vbd"].set_size_request(len(data)*20, 250)
             if data:
-                gobject.idle_add(lambda: self.wine.builder.get_object("scrwin_diskusage").add(chart["vbd"]) and False)
-                gobject.idle_add(lambda: self.wine.builder.get_object("scrwin_diskusage").show_all() and False)
+                GObject.idle_add(lambda: self.wine.builder.get_object("scrwin_diskusage").add(chart["vbd"]) and False)
+                GObject.idle_add(lambda: self.wine.builder.get_object("scrwin_diskusage").show_all() and False)
 
         if max_value == 0:  # TODO: What's this for?
             max_value = 1
         # TODO: James - disabled this. Maybe reenable it properly
-        #gobject.idle_add(lambda: self.wine.adjust_scrollbar_performance() and False)
+        #GObject.idle_add(lambda: self.wine.adjust_scrollbar_performance() and False)
 
         time.sleep(5)
         while not self.halt_performance:
@@ -702,7 +703,7 @@ class oxcSERVER(oxcSERVERvm, oxcSERVERhost, oxcSERVERproperties,
         self.filter_ref = self.wine.selected_ref
         i = 0
         for ch in self.wine.builder.get_object("vmtablelog").get_children():
-            gobject.idle_add(lambda: self.wine.builder.get_object(
+            GObject.idle_add(lambda: self.wine.builder.get_object(
                 "vmtablelog").remove(ch) and False)
 
         for task_ref in filter(self.task_filter_uuid, self.tasks):
@@ -731,7 +732,7 @@ class oxcSERVER(oxcSERVERvm, oxcSERVERhost, oxcSERVERproperties,
                           key=itemgetter("timestamp"), reverse=True):
             timestamp = str(log['timestamp'])
             if thread:
-                gobject.idle_add(lambda: self.add_box_log(log['name'], timestamp,
+                GObject.idle_add(lambda: self.add_box_log(log['name'], timestamp,
                                                           log['body'], str(log['timestamp']),
                                                           alt=i % 2) and False)
             else:
@@ -741,25 +742,25 @@ class oxcSERVER(oxcSERVERvm, oxcSERVERhost, oxcSERVERproperties,
 
     def add_box_log(self, title, date, description, time, id=None, task=None, progress=0, alt=0):
         date = str(self.format_date(date))
-        vboxframe = gtk.Frame()
-        vboxframe.modify_bg(gtk.STATE_NORMAL, gtk.gdk.color_parse("#d5e5f7"))
+        vboxframe = Gtk.Frame()
+        vboxframe.modify_bg(Gtk.StateType.NORMAL, Gdk.color_parse("#d5e5f7"))
         if task:
             vboxframe.set_size_request(900, 100)
         else:
             vboxframe.set_size_request(900, 80)
-        vboxchild = gtk.Fixed()
-        vboxevent = gtk.EventBox()
+        vboxchild = Gtk.Fixed()
+        vboxevent = Gtk.EventBox()
         vboxevent.add(vboxchild)
         vboxframe.add(vboxevent)
-        vboxchildlabel1 = gtk.Label()
+        vboxchildlabel1 = Gtk.Label()
         vboxchildlabel1.set_selectable(True)
-        vboxchildlabel2 = gtk.Label()
+        vboxchildlabel2 = Gtk.Label()
         vboxchildlabel2.set_selectable(True)
-        vboxchildlabel3 = gtk.Label()
+        vboxchildlabel3 = Gtk.Label()
         vboxchildlabel3.set_selectable(True)
         vboxchildlabel3.set_size_request(-1, -1) # x=600
         vboxchildlabel3.set_line_wrap(True)
-        vboxchildlabel4 = gtk.Label()
+        vboxchildlabel4 = Gtk.Label()
         vboxchildlabel4.set_selectable(True)
         # FIXME
         # vboxchildprogressbar.set_style(1)
@@ -772,7 +773,7 @@ class oxcSERVER(oxcSERVERvm, oxcSERVERhost, oxcSERVERproperties,
             vboxchildlabel1.set_label(title)
             vboxchildlabel3.set_label(description)
 
-        vboxchildlabel1.modify_fg(gtk.STATE_NORMAL, gtk.gdk.color_parse("blue"))
+        vboxchildlabel1.modify_fg(Gtk.StateType.NORMAL, Gdk.color_parse("blue"))
         # vboxchildlabel4.set_label(time)
         vboxchild.put(vboxchildlabel1, 25, 12)
         vboxchild.put(vboxchildlabel2, 600, 12)
@@ -781,11 +782,11 @@ class oxcSERVER(oxcSERVERvm, oxcSERVERhost, oxcSERVERproperties,
 
         # Active task
         if task:
-            self.vboxchildcancel[id] = gtk.Button()
+            self.vboxchildcancel[id] = Gtk.Button()
             self.vboxchildcancel[id].connect("clicked", self.cancel_task)
             self.vboxchildcancel[id].set_name(id)
-            self.vboxchildprogressbar[id] = gtk.ProgressBar()
-            self.vboxchildprogress[id] = gtk.Label()
+            self.vboxchildprogressbar[id] = Gtk.ProgressBar()
+            self.vboxchildprogress[id] = Gtk.Label()
             self.vboxchildprogress[id].set_selectable(True)
             self.vboxchildprogressbar[id].set_size_request(500, 20)
             self.vboxchildprogressbar[id].set_fraction(progress)
@@ -799,7 +800,7 @@ class oxcSERVER(oxcSERVERvm, oxcSERVERhost, oxcSERVERproperties,
             elif ("snapshot" in task and task["snapshot"]["status"] == "failure") or task["status"] == "failure":
                 self.vboxchildcancel[id].hide()
                 self.vboxchildprogressbar[id].hide()
-                self.vboxchildprogress[id].modify_fg(gtk.STATE_NORMAL, gtk.gdk.color_parse('#FF0000'))
+                self.vboxchildprogress[id].modify_fg(Gtk.StateType.NORMAL, Gdk.color_parse('#FF0000'))
                 if "snapshot" in task:
                     self.vboxchildprogress[id].set_label("Error: %s" % task["snapshot"]["error_info"])
                 else:
@@ -817,17 +818,17 @@ class oxcSERVER(oxcSERVERvm, oxcSERVERhost, oxcSERVERproperties,
                 self.vboxchildprogressbar[id].hide()
 
         if alt:
-            vboxevent.modify_bg(gtk.STATE_NORMAL, gtk.gdk.color_parse("#d5e5f7"))
+            vboxevent.modify_bg(Gtk.StateType.NORMAL, Gdk.color_parse("#d5e5f7"))
         else:
-            vboxevent.modify_bg(gtk.STATE_NORMAL, gtk.gdk.color_parse("#BAE5D3"))
+            vboxevent.modify_bg(Gtk.StateType.NORMAL, Gdk.color_parse("#BAE5D3"))
         self.wine.builder.get_object("vmtablelog").add(vboxframe)
         self.wine.builder.get_object("vmtablelog").show_all()
 
     def cancel_task(self, widget, data=None):
-        self.connection.task.cancel(self.session_uuid, gtk.Buildable.get_name(widget))
+        self.connection.task.cancel(self.session_uuid, Gtk.Buildable.get_name(widget))
         widget.hide()
-        self.vboxchildprogress[gtk.Buildable.get_name(widget)].set_label("Cancelled")
-        self.vboxchildprogressbar[gtk.Buildable.get_name(widget)].hide()
+        self.vboxchildprogress[Gtk.Buildable.get_name(widget)].set_label("Cancelled")
+        self.vboxchildprogressbar[Gtk.Buildable.get_name(widget)].hide()
         self.wine.push_alert("Task cancelled")
 
     def fill_host_storage(self, ref, list):
@@ -864,7 +865,7 @@ class oxcSERVER(oxcSERVERvm, oxcSERVERhost, oxcSERVERproperties,
         :param list:
         """
         while not self.halt_search:
-            gobject.idle_add(lambda: list.clear() and False)
+            GObject.idle_add(lambda: list.clear() and False)
             position = 0
             hosts = {}
             # FIXME: what happen when a pool exists?
@@ -893,10 +894,10 @@ class oxcSERVER(oxcSERVERvm, oxcSERVERhost, oxcSERVERproperties,
                 net_address = self.all['host'][host]['address']
 
                 hosts[host] = position
-                gobject.idle_add(lambda item: list.append(None, item) and False,
-                                 ([gtk.gdk.pixbuf_new_from_file(img_connected), name,
-                                   gtk.gdk.pixbuf_new_from_file(load_img), load_txt,
-                                   gtk.gdk.pixbuf_new_from_file(mem_img), memory, "-", "",
+                GObject.idle_add(lambda item: list.append(None, item) and False,
+                                 ([GdkPixbuf.Pixbuf.new_from_file(img_connected), name,
+                                   GdkPixbuf.Pixbuf.new_from_file(load_img), load_txt,
+                                   GdkPixbuf.Pixbuf.new_from_file(mem_img), memory, "-", "",
                                    net_address, uptime, None]))
 
                 position += 1
@@ -1032,17 +1033,17 @@ class oxcSERVER(oxcSERVERvm, oxcSERVERhost, oxcSERVERproperties,
                             memory_img = "0"
 
                         if with_tools:
-                            gobject.idle_add(lambda parent_path, item: list.append(list.get_iter(parent_path), item)
+                            GObject.idle_add(lambda parent_path, item: list.append(list.get_iter(parent_path), item)
                                              and False, hosts[parent],
-                                             ([gtk.gdk.pixbuf_new_from_file(os.path.join(utils.module_path(),
+                                             ([GdkPixbuf.Pixbuf.new_from_file(os.path.join(utils.module_path(),
                                                                             "images/tree_running_16.png")),
                                                self.all['vms'][vm]['name_label'] + "\n<i>" +
                                                self.all['vms'][vm]['name_description'] + "</i>",
-                                               gtk.gdk.pixbuf_new_from_file(
+                                               GdkPixbuf.Pixbuf.new_from_file(
                                                    os.path.join(utils.module_path(),
                                                                 "images/usagebar_%s.png" % load_img)),
                                                load + "% of " + str(cpu) + " cpus",
-                                               gtk.gdk.pixbuf_new_from_file(os.path.join(utils.module_path(),
+                                               GdkPixbuf.Pixbuf.new_from_file(os.path.join(utils.module_path(),
                                                                             "images/usagebar_%s.png" %
                                                                             abs(int(memory_img)))),
                                                memory_used + "% of " + self.convert_bytes(memory_total),
@@ -1052,16 +1053,16 @@ class oxcSERVER(oxcSERVERvm, oxcSERVERhost, oxcSERVERproperties,
                                                str(vif_read_avg) + "/" + str(vif_read_max),
                                                "\n".join(ips), uptime, None]))
                         else:
-                            gobject.idle_add(lambda parent_path, item: list.append(list.get_iter(parent_path), item)
+                            GObject.idle_add(lambda parent_path, item: list.append(list.get_iter(parent_path), item)
                                              and False, hosts[parent],
-                                             ([gtk.gdk.pixbuf_new_from_file(os.path.join(utils.module_path(),
+                                             ([GdkPixbuf.Pixbuf.new_from_file(os.path.join(utils.module_path(),
                                                                             "images/tree_running_16.png")),
                                                self.all['vms'][vm]['name_label'] + "\n<i>" +
                                                self.all['vms'][vm]['name_description'] + "</i>",
-                                               gtk.gdk.pixbuf_new_from_file(os.path.join(utils.module_path(),
+                                               GdkPixbuf.Pixbuf.new_from_file(os.path.join(utils.module_path(),
                                                                             "images/usagebar_%s.png" % load_img)),
                                                load + "% of " + str(cpu) + " cpus",
-                                               gtk.gdk.pixbuf_new_from_file(os.path.join(utils.module_path(),
+                                               GdkPixbuf.Pixbuf.new_from_file(os.path.join(utils.module_path(),
                                                                             "images/usagebar_0.png")),
                                                "", "<span foreground='red'><b>XenServer tools</b></span>",
                                                "<span foreground='red'><b>not installed</b></span>", "-",
@@ -1070,13 +1071,13 @@ class oxcSERVER(oxcSERVERvm, oxcSERVERhost, oxcSERVERproperties,
                         pass
                         """
                         list.append(None,
-                          ([gtk.gdk.pixbuf_new_from_file(os.path.join(utils.module_path(),
+                          ([GdkPixbuf.Pixbuf.new_from_file(os.path.join(utils.module_path(),
                           "images/tree_running_16.png")),
                             self.all['vms'][vm]['name_label'] + "\n<i>" + self.all['vms'][vm]['name_description'] + "</i>",
-                            gtk.gdk.pixbuf_new_from_file(os.path.join(utils.module_path(),
+                            GdkPixbuf.Pixbuf.new_from_file(os.path.join(utils.module_path(),
                             "images/usagebar_%s.png" % load_img)),
                             load + "% of " + str(cpu) + " cpus",
-                            gtk.gdk.pixbuf_new_from_file(os.path.join(utils.module_path(),
+                            GdkPixbuf.Pixbuf.new_from_file(os.path.join(utils.module_path(),
                             "images/usagebar_0.png")),
                             "",
                             "<span foreground='red'><b>XenServer tools</b></span>",
@@ -1088,14 +1089,14 @@ class oxcSERVER(oxcSERVERvm, oxcSERVERhost, oxcSERVERproperties,
                         """
                         # print  self.all['vms'][vm]
                 else:
-                    gobject.idle_add(lambda: list.set(list.get_iter(hosts[parent]), 2,
-                                                      gtk.gdk.pixbuf_new_from_file(os.path.join(
+                    GObject.idle_add(lambda: list.set(list.get_iter(hosts[parent]), 2,
+                                                      GdkPixbuf.Pixbuf.new_from_file(os.path.join(
                                                           utils.module_path(),
                                                           "images/usagebar_%s.png" % load_img)),
                                                       3,  load + "% of " + str(cpu) + " cpus",
                                                       7, str(vif_write_avg) + "/" + str(vif_write_max) + " | " +
                                                       str(vif_read_avg) + "/" + str(vif_read_max)) and False)
-            gobject.idle_add(lambda: self.wine.treesearch.expand_all() and False)
+            GObject.idle_add(lambda: self.wine.treesearch.expand_all() and False)
 
     def fill_local_storage(self, ref, list):
         list.clear()
@@ -1679,7 +1680,7 @@ class oxcSERVER(oxcSERVERvm, oxcSERVERhost, oxcSERVERproperties,
         print "Entering event loop"
         # support function -  to evalue msg expression before pushing to GTK loop
         def push_alert(msg):
-            gobject.idle_add(lambda: self.wine.push_alert(msg))
+            GObject.idle_add(lambda: self.wine.push_alert(msg))
 
         while not self.halt:
             try:
@@ -1690,14 +1691,14 @@ class oxcSERVER(oxcSERVERvm, oxcSERVERhost, oxcSERVERproperties,
                             if event['operation'] == "add":
                                 self.all['vms'][event["ref"]] = event['snapshot']
                                 if not self.all['vms'][event["ref"]]["is_a_snapshot"]:
-                                    gobject.idle_add(lambda: self.add_vm_to_tree(event["ref"]) and False)
+                                    GObject.idle_add(lambda: self.add_vm_to_tree(event["ref"]) and False)
                                 else:
-                                    gobject.idle_add(lambda: self.fill_vm_snapshots(
+                                    GObject.idle_add(lambda: self.fill_vm_snapshots(
                                         self.wine.selected_ref, self.wine.builder.get_object("treevmsnapshots"),
                                         self.wine.builder.get_object("listvmsnapshots")) and False)
 
-                                gobject.idle_add(lambda: self.wine.modelfilter.clear_cache() and False)
-                                gobject.idle_add(lambda: self.wine.modelfilter.refilter() and False)
+                                GObject.idle_add(lambda: self.wine.modelfilter.clear_cache() and False)
+                                GObject.idle_add(lambda: self.wine.modelfilter.refilter() and False)
                                 for track in self.track_tasks:
                                     if self.track_tasks[track] == "Import.VM":
                                         self.track_tasks[track] = event["ref"]
@@ -1719,10 +1720,10 @@ class oxcSERVER(oxcSERVERvm, oxcSERVERhost, oxcSERVERproperties,
                                     self.found_iter = None
                                     self.treestore.foreach(self.search_ref, event["ref"])
                                     if self.found_iter:
-                                        gobject.idle_add(lambda: self.treestore.remove(self.found_iter) and False)
+                                        GObject.idle_add(lambda: self.treestore.remove(self.found_iter) and False)
                                     del self.all['vms'][event["ref"]]
                                 else:
-                                    gobject.idle_add(lambda: self.fill_vm_snapshots(
+                                    GObject.idle_add(lambda: self.fill_vm_snapshots(
                                         self.wine.selected_ref, self.wine.builder.get_object("treevmsnapshots"),
                                         self.wine.builder.get_object("listvmsnapshots")) and False)
                                     del self.all['vms'][event["ref"]]
@@ -1738,23 +1739,23 @@ class oxcSERVER(oxcSERVERvm, oxcSERVERhost, oxcSERVERproperties,
                                         self.found_iter = None
                                         self.treestore.foreach(self.search_ref, event["ref"])
                                         if self.found_iter and event['snapshot']['is_a_template']:
-                                            gobject.idle_add(lambda: self.treestore.set(
+                                            GObject.idle_add(lambda: self.treestore.set(
                                                 self.found_iter, 0,
-                                                gtk.gdk.pixbuf_new_from_file(os.path.join(
+                                                GdkPixbuf.Pixbuf.new_from_file(os.path.join(
                                                     utils.module_path(), "images/user_template_16.png")), 3,
                                                 "custom_template") and False)
-                                            gobject.idle_add(lambda: self.wine.update_tabs() and False)
+                                            GObject.idle_add(lambda: self.wine.update_tabs() and False)
                                     else:
                                         if event['snapshot']['resident_on'] != \
                                                 self.all['vms'][vm_id]['resident_on']:
                                             self.found_iter = None
-                                            gobject.idle_add(lambda: self.treestore.foreach(self.search_ref,
+                                            GObject.idle_add(lambda: self.treestore.foreach(self.search_ref,
                                                                                             event["ref"]) and False)
                                             if self.found_iter:
-                                                gobject.idle_add(lambda: self.treestore.remove(self.found_iter)
+                                                GObject.idle_add(lambda: self.treestore.remove(self.found_iter)
                                                                  and False)
                                                 self.all['vms'][vm_id] = event['snapshot']
-                                                gobject.idle_add(lambda: self.add_vm_to_tree(event["ref"] and False))
+                                                GObject.idle_add(lambda: self.add_vm_to_tree(event["ref"] and False))
 
                                         if event['snapshot']['affinity'] != \
                                                 self.all['vms'][vm_id]['affinity']:
@@ -1768,7 +1769,7 @@ class oxcSERVER(oxcSERVERvm, oxcSERVERhost, oxcSERVERproperties,
                                         self.all['vms'][event["ref"]] = event['snapshot']
                                 self.all['vms'][event["ref"]] = event['snapshot']
                                 self.treestore.foreach(self.update_vm_status, filter_uuid)
-                                gobject.idle_add(lambda: self.wine.update_memory_tab() and False)
+                                GObject.idle_add(lambda: self.wine.update_memory_tab() and False)
                         elif event['class'] == "vm_guest_metrics":
                             self.all['VM_guest_metrics'][event['ref']] = \
                                 self.connection.VM_guest_metrics.get_record(self.session_uuid, event['ref'])
@@ -1787,7 +1788,7 @@ class oxcSERVER(oxcSERVERvm, oxcSERVERhost, oxcSERVERproperties,
                             if event["snapshot"]["error_info"]:
                                 if event["ref"] in self.track_tasks:
                                     if self.track_tasks[event["ref"]] in self.all['vms']:
-                                        gobject.idle_add(lambda: self.wine.push_error_alert(
+                                        GObject.idle_add(lambda: self.wine.push_error_alert(
                                             "%s %s %s" % (event["snapshot"]["name_label"],
                                                           self.all['vms'][self.track_tasks[event["ref"]]]["name_label"],
                                                           event["snapshot"]["error_info"])) and False)
@@ -1796,13 +1797,13 @@ class oxcSERVER(oxcSERVERvm, oxcSERVERhost, oxcSERVERproperties,
                                             self.vboxchildcancel[eref].hide()
                                             self.vboxchildprogressbar[eref].hide()
                                             self.vboxchildprogress[eref].set_label(str(event["snapshot"]["error_info"]))
-                                            self.vboxchildprogress[eref].modify_fg(gtk.STATE_NORMAL,
-                                                                                   gtk.gdk.color_parse('#FF0000'))
+                                            self.vboxchildprogress[eref].modify_fg(Gtk.StateType.NORMAL,
+                                                                                   Gdk.color_parse('#FF0000'))
 
                                     else:
                                         self.wine.builder.get_object("wprogressimportvm").hide()
                                         self.wine.builder.get_object("tabboximport").set_current_page(2)
-                                        gobject.idle_add(lambda: self.wine.push_error_alert(
+                                        GObject.idle_add(lambda: self.wine.push_error_alert(
                                             "%s: %s" % (event["snapshot"]["name_description"],
                                                         event["snapshot"]["error_info"])) and False)
                             else:
@@ -1814,13 +1815,13 @@ class oxcSERVER(oxcSERVERvm, oxcSERVERhost, oxcSERVERproperties,
 
                                     if vm_ref in self.all['vms']:
                                         if event["snapshot"]["status"] == "success":
-                                            gobject.idle_add(
+                                            GObject.idle_add(
                                                 lambda: self.wine.push_alert(
                                                     "%s %s completed" % (
                                                         name_lbl, vm_name))
                                                 and False)
                                         else:
-                                            gobject.idle_add(
+                                            GObject.idle_add(
                                                 lambda: self.wine.push_alert(
                                                     "%s %s %s" %
                                                     (name_lbl, vm_name,
@@ -1833,16 +1834,16 @@ class oxcSERVER(oxcSERVERvm, oxcSERVERhost, oxcSERVERproperties,
                                         if "Value" in vm:
                                             self.all['vms'][self.track_tasks[event["ref"]]] = vm['Value']
                                             # self.add_vm_to_tree(self.track_tasks[event["ref"]])
-                                            gobject.idle_add(lambda: self.wine.modelfilter.clear_cache() and False)
-                                            gobject.idle_add(lambda: self.wine.modelfilter.refilter() and False)
-                                            gobject.idle_add(lambda: self.wine.push_alert(
+                                            GObject.idle_add(lambda: self.wine.modelfilter.clear_cache() and False)
+                                            GObject.idle_add(lambda: self.wine.modelfilter.refilter() and False)
+                                            GObject.idle_add(lambda: self.wine.push_alert(
                                                 "%s %s %s" % (
                                                     event["snapshot"]["name_label"],
                                                     self.all['vms'][self.track_tasks[event["ref"]]]["name_label"],
                                                     (" %.2f%%" % (float(event["snapshot"]["progress"])*100))))
                                                 and False)
                                         else:
-                                            gobject.idle_add(lambda: self.wine.push_alert(
+                                            GObject.idle_add(lambda: self.wine.push_alert(
                                                 "%s: %s %s" % (
                                                     event["snapshot"]["name_label"],
                                                     event["snapshot"]["name_description"],
@@ -1861,7 +1862,7 @@ class oxcSERVER(oxcSERVERvm, oxcSERVERhost, oxcSERVERproperties,
                                     vif_ref = nodes[0].childNodes[0].data
                                     self.connection.VIF.plug(self.session_uuid, vif_ref)
                                     if self.wine.selected_tab == "VM_Network":
-                                        gobject.idle_add(lambda: self.fill_vm_network(
+                                        GObject.idle_add(lambda: self.fill_vm_network(
                                             self.wine.selected_ref,
                                             self.wine.builder.get_object("treevmnetwork"),
                                             self.wine.builder.get_object("listvmnetwork")) and False)
@@ -1927,14 +1928,14 @@ class oxcSERVER(oxcSERVERvm, oxcSERVERhost, oxcSERVERproperties,
 
                                         if self.track_tasks[event["ref"]] == self.wine.selected_ref and \
                                            self.wine.selected_tab == "VM_Snapshots":
-                                                gobject.idle_add(lambda: self.fill_vm_snapshots(
+                                                GObject.idle_add(lambda: self.fill_vm_snapshots(
                                                     self.wine.selected_ref,
                                                     self.wine.builder.get_object("treevmsnapshots"),
                                                     self.wine.builder.get_object("listvmsnapshots")) and False)
                                 if event["snapshot"]["name_label"] == "VM.Async.snapshot":
                                         if self.track_tasks[event["ref"]] == self.wine.selected_ref and \
                                            self.wine.selected_tab == "VM_Snapshots":
-                                                gobject.idle_add(lambda: self.fill_vm_snapshots(
+                                                GObject.idle_add(lambda: self.fill_vm_snapshots(
                                                     self.wine.selected_ref,
                                                     self.wine.builder.get_object("treevmsnapshots"),
                                                     self.wine.builder.get_object("listvmsnapshots")) and False)
@@ -1945,19 +1946,19 @@ class oxcSERVER(oxcSERVERvm, oxcSERVERhost, oxcSERVERproperties,
                                             self.make_into_template(self.track_tasks[event["ref"]])
                                 if event["snapshot"]["name_label"] == "VM.destroy":
                                         if self.wine.selected_tab == "VM_Snapshots":
-                                                gobject.idle_add(lambda: self.fill_vm_snapshots(
+                                                GObject.idle_add(lambda: self.fill_vm_snapshots(
                                                     self.wine.selected_ref,
                                                     self.wine.builder.get_object("treevmsnapshots"),
                                                     self.wine.builder.get_object("listvmsnapshots")) and False)
                                 if event["snapshot"]["name_label"] == "VIF.destroy":
                                         if self.wine.selected_tab == "VM_Network":
-                                                gobject.idle_add(lambda: self.fill_vm_network(
+                                                GObject.idle_add(lambda: self.fill_vm_network(
                                                     self.wine.selected_ref,
                                                     self.wine.builder.get_object("treevmnetwork"),
                                                     self.wine.builder.get_object("listvmnetwork")) and False)
                                 if event["snapshot"]["name_label"] == "VIF.plug":
                                         if self.wine.selected_tab == "VM_Network":
-                                                gobject.idle_add(lambda: self.fill_vm_network(
+                                                GObject.idle_add(lambda: self.fill_vm_network(
                                                     self.wine.selected_ref,
                                                     self.wine.builder.get_object("treevmnetwork"),
                                                     self.wine.builder.get_object("listvmnetwork")) and False)
@@ -1965,24 +1966,24 @@ class oxcSERVER(oxcSERVERvm, oxcSERVERhost, oxcSERVERproperties,
                                 if event["snapshot"]["name_label"] in ("VBD.create", "VBD.destroy"):
                                         if self.wine.selected_tab == "VM_Storage":
                                                 # print "fill_vm_storage start"
-                                                gobject.idle_add(lambda: self.fill_vm_storage(
+                                                GObject.idle_add(lambda: self.fill_vm_storage(
                                                     self.wine.selected_ref,
                                                     self.wine.builder.get_object("listvmstorage")) and False)
                                                 # print pdb.set_trace()
                                                 # print "fill_vm_storage end"
                                 if event["snapshot"]["name_label"] in ("VDI.create", "VDI.destroy"):
                                         if self.wine.selected_tab == "Local_Storage":
-                                                gobject.idle_add(lambda: self.fill_local_storage(
+                                                GObject.idle_add(lambda: self.fill_local_storage(
                                                     self.wine.selected_ref,
                                                     self.wine.builder.get_object("liststg")) and False)
                                 if event["snapshot"]["name_label"] in ("network.create", "network.destroy"):
                                         if self.wine.selected_tab == "HOST_Network":
-                                            gobject.idle_add(lambda: self.wine.update_tab_host_network() and False)
+                                            GObject.idle_add(lambda: self.wine.update_tab_host_network() and False)
 
                                 if event["snapshot"]["name_label"] in ("Async.Bond.create", "Bond.create",
                                                                        "Async.Bond.destroy", "Bond.destroy"):
                                         if self.wine.selected_tab == "HOST_Nics":
-                                            gobject.idle_add(lambda: self.wine.update_tab_host_nics() and False)
+                                            GObject.idle_add(lambda: self.wine.update_tab_host_nics() and False)
 
                             if event["ref"] in self.track_tasks:
                                 self.tasks[event["ref"]] = event
@@ -1997,14 +1998,14 @@ class oxcSERVER(oxcSERVERvm, oxcSERVERhost, oxcSERVERproperties,
                                        self.wine.selected_tab == "VM_Logs":
                                         if event["ref"] in self.track_tasks \
                                                 and event["ref"] not in self.vboxchildprogressbar:
-                                            gobject.idle_add(lambda: self.fill_vm_log(self.wine.selected_uuid,
+                                            GObject.idle_add(lambda: self.fill_vm_log(self.wine.selected_uuid,
                                                                                       thread=True) and False)
                                 else:
                                     if event["snapshot"]["name_label"] == "Exporting VM" \
                                             and event["ref"] not in self.vboxchildprogressbar:
                                         self.track_tasks[event["ref"]] = self.wine.selected_ref
                                         self.tasks[event["ref"]] = event
-                                        gobject.idle_add(lambda: self.fill_vm_log(self.wine.selected_uuid,
+                                        GObject.idle_add(lambda: self.fill_vm_log(self.wine.selected_uuid,
                                                                                   thread=True) and False)
                                     else:
                                         # print event
@@ -2014,10 +2015,10 @@ class oxcSERVER(oxcSERVERvm, oxcSERVERhost, oxcSERVERproperties,
                             self.all['VDI'][event["ref"]] = event["snapshot"]
                             if self.wine.selected_tab == "Local_Storage":
                                 liststg = self.wine.builder.get_object("liststg")
-                                gobject.idle_add(lambda: self.fill_local_storage(self.wine.selected_ref, liststg)
+                                GObject.idle_add(lambda: self.fill_local_storage(self.wine.selected_ref, liststg)
                                                  and False)
                             if self.wine.selected_tab == "VM_Storage":
-                                gobject.idle_add(lambda: self.fill_vm_storage(
+                                GObject.idle_add(lambda: self.fill_vm_storage(
                                     self.wine.selected_ref,
                                     self.wine.builder.get_object("listvmstorage")) and False)
 
@@ -2030,7 +2031,7 @@ class oxcSERVER(oxcSERVERvm, oxcSERVERhost, oxcSERVERproperties,
                         elif event["class"] == "pif":
                             self.all['PIF'][event["ref"]] = event["snapshot"]
                             if self.wine.selected_tab == "HOST_Nics":
-                                gobject.idle_add(lambda: self.wine.update_tab_host_nics() and False)
+                                GObject.idle_add(lambda: self.wine.update_tab_host_nics() and False)
 
                         elif event["class"] == "bond":
                             if event["operation"] == "del":
@@ -2038,7 +2039,7 @@ class oxcSERVER(oxcSERVERvm, oxcSERVERhost, oxcSERVERproperties,
                             else:
                                 self.all['Bond'][event["ref"]] = event["snapshot"]
                             if self.wine.selected_tab == "HOST_Nics":
-                                gobject.idle_add(lambda: self.wine.update_tab_host_nics() and False)
+                                GObject.idle_add(lambda: self.wine.update_tab_host_nics() and False)
 
                         elif event["class"] == "vif":
                             if event["operation"] == "del":
@@ -2053,23 +2054,23 @@ class oxcSERVER(oxcSERVERvm, oxcSERVERhost, oxcSERVERproperties,
                             self.treestore.foreach(self.update_storage_status, "")
                             if event["operation"] == "del":
                                 self.filter_uuid = event['snapshot']['uuid']
-                                gobject.idle_add(lambda: self.treestore.foreach(self.delete_storage, "") and False)
+                                GObject.idle_add(lambda: self.treestore.foreach(self.delete_storage, "") and False)
                             if event["operation"] == "add":
                                 sr = event["ref"]
                                 # FIXME
                                 host = self.all['host'].keys()[0]
                                 if self.poolroot:
                                     # iter_ref = self.treestore.append(self.poolroot, [\
-                                    gobject.idle_add(lambda: self.treestore.append(self.poolroot, [
-                                        gtk.gdk.pixbuf_new_from_file(os.path.join(utils.module_path(),
+                                    GObject.idle_add(lambda: self.treestore.append(self.poolroot, [
+                                        GdkPixbuf.Pixbuf.new_from_file(os.path.join(utils.module_path(),
                                                                                   "images/storage_shaped_16.png")),
                                         self.all['SR'][sr]['name_label'], self.all['SR'][sr]['uuid'],
                                         "storage", None, self.host, sr, self.all['SR'][sr]['allowed_operations'],
                                         None]) and False)
                                 else:
                                     # iter_ref = self.treestore.append(self.hostroot[host], [\
-                                    gobject.idle_add(lambda: self.treestore.append(self.hostroot[host], [
-                                        gtk.gdk.pixbuf_new_from_file(os.path.join(utils.module_path(),
+                                    GObject.idle_add(lambda: self.treestore.append(self.hostroot[host], [
+                                        GdkPixbuf.Pixbuf.new_from_file(os.path.join(utils.module_path(),
                                                                                   "images/storage_shaped_16.png")),
                                         self.all['SR'][sr]['name_label'], self.all['SR'][sr]['uuid'],
                                         "storage", None, self.host, sr, self.all['SR'][sr]['allowed_operations'],
@@ -2078,10 +2079,10 @@ class oxcSERVER(oxcSERVERvm, oxcSERVERhost, oxcSERVERproperties,
                         elif event["class"] == "pool":
                             if self.all['pool'][event["ref"]]['name_label'] != event["snapshot"]["name_label"]:
                                 if self.poolroot:
-                                    gobject.idle_add(lambda: self.wine.treestore.remove(self.poolroot) and False)
+                                    GObject.idle_add(lambda: self.wine.treestore.remove(self.poolroot) and False)
                                 else:
                                     for host_ref in self.hostroot.keys():
-                                        gobject.idle_add(lambda: self.wine.treestore.remove(self.hostroot[host_ref])
+                                        GObject.idle_add(lambda: self.wine.treestore.remove(self.hostroot[host_ref])
                                                          and False)
 
                                 self.sync()
@@ -2109,7 +2110,7 @@ class oxcSERVER(oxcSERVERvm, oxcSERVERhost, oxcSERVERproperties,
                             else:
                                 self.all['network'][event["ref"]] = event["snapshot"]
                             if self.wine.selected_tab == "HOST_Network":
-                                gobject.idle_add(lambda: self.wine.update_tab_host_network() and False)
+                                GObject.idle_add(lambda: self.wine.update_tab_host_network() and False)
                         elif event["class"] == "vlan":
                             if event["operation"] == "del":
                                 if event["ref"] in self.all['vlan']:
@@ -2156,9 +2157,9 @@ class oxcSERVER(oxcSERVERvm, oxcSERVERhost, oxcSERVERproperties,
                             if event["operation"] == "add":
                                 sr = event["snapshot"]["SR"]
                                 host = event["snapshot"]["host"]
-                                gobject.idle_add(lambda: self.treestore.insert_after(
+                                GObject.idle_add(lambda: self.treestore.insert_after(
                                     self.hostroot[host], self.last_storage_iter,
-                                    [gtk.gdk.pixbuf_new_from_file(os.path.join(utils.module_path(),
+                                    [GdkPixbuf.Pixbuf.new_from_file(os.path.join(utils.module_path(),
                                                                                "images/storage_shaped_16.png")),
                                      self.all['SR'][sr]['name_label'], self.all['SR'][sr]['uuid'],
                                      "storage", None, self.host, sr, self.all['SR'][sr]['allowed_operations'], None])
@@ -2189,73 +2190,73 @@ class oxcSERVER(oxcSERVERvm, oxcSERVERhost, oxcSERVERproperties,
         """
         sr = self.treestore.get_value(iter_ref, 6)
         if sr == user_data[0]:
-            gobject.idle_add(lambda: self.treestore.set_value(iter_ref,  0, gtk.gdk.pixbuf_new_from_file(os.path.join(
+            GObject.idle_add(lambda: self.treestore.set_value(iter_ref,  0, GdkPixbuf.Pixbuf.new_from_file(os.path.join(
                 utils.module_path(), "images/storage_shaped_16.png"))) and False)
         if sr == user_data[1]:
-            gobject.idle_add(lambda: self.treestore.set_value(iter_ref,  0, gtk.gdk.pixbuf_new_from_file(os.path.join(
+            GObject.idle_add(lambda: self.treestore.set_value(iter_ref,  0, GdkPixbuf.Pixbuf.new_from_file(os.path.join(
                 utils.module_path(), "images/storage_default_16.png"))) and False)
             self.default_sr = sr
         if sr == user_data[0] or sr == user_data[1]:
             if len(self.all['SR'][sr]['PBDs']) == 0:
-                gobject.idle_add(lambda: self.treestore.set_value(iter_ref,  0, gtk.gdk.pixbuf_new_from_file(
+                GObject.idle_add(lambda: self.treestore.set_value(iter_ref,  0, GdkPixbuf.Pixbuf.new_from_file(
                     os.path.join(utils.module_path(), "images/storage_detached_16.png"))) and False)
             broken = False
             for pbd_ref in self.all['SR'][sr]['PBDs']:
                 if not self.all['PBD'][pbd_ref]['currently_attached']:
                     broken = True
-                    gobject.idle_add(lambda: self.treestore.set_value(iter_ref,  0, gtk.gdk.pixbuf_new_from_file(
+                    GObject.idle_add(lambda: self.treestore.set_value(iter_ref,  0, GdkPixbuf.Pixbuf.new_from_file(
                         os.path.join(utils.module_path(), "images/storage_broken_16.png"))) and False)
             if not broken:
-                gobject.idle_add(lambda: self.treestore.set_value(iter_ref,  0, gtk.gdk.pixbuf_new_from_file(
+                GObject.idle_add(lambda: self.treestore.set_value(iter_ref,  0, GdkPixbuf.Pixbuf.new_from_file(
                     os.path.join(utils.module_path(), "images/storage_shaped_16.png"))) and False)
 
     def update_vm_status(self, model, path, iter_ref, user_data):
         if self.treestore.get_value(iter_ref, 2) == user_data:
             vm = self.all['vms'][self.vm_filter_uuid(user_data)]
             if not vm["is_a_template"]:
-                gobject.idle_add(lambda: self.treestore.set_value(iter_ref,  1, vm['name_label']) and False)
+                GObject.idle_add(lambda: self.treestore.set_value(iter_ref,  1, vm['name_label']) and False)
                 if len(vm["current_operations"]):
-                    gobject.idle_add(lambda: self.treestore.set_value(iter_ref,  0, gtk.gdk.pixbuf_new_from_file(
+                    GObject.idle_add(lambda: self.treestore.set_value(iter_ref,  0, GdkPixbuf.Pixbuf.new_from_file(
                         os.path.join(utils.module_path(), "images/tree_starting_16.png"))) and False)
                 else:
-                    gobject.idle_add(lambda: self.treestore.set_value(iter_ref,  0, gtk.gdk.pixbuf_new_from_file(
+                    GObject.idle_add(lambda: self.treestore.set_value(iter_ref,  0, GdkPixbuf.Pixbuf.new_from_file(
                         os.path.join(utils.module_path(), "images/tree_%s_16.png" % vm['power_state'].lower())))
                         and False)
-                gobject.idle_add(lambda: self.treestore.set_value(iter_ref,  4, vm['power_state']) and False)
+                GObject.idle_add(lambda: self.treestore.set_value(iter_ref,  4, vm['power_state']) and False)
                 self.wine.selected_state = vm['power_state']
                 self.wine.selected_actions = vm['allowed_operations']
             else:
-                gobject.idle_add(lambda: self.treestore.set_value(iter_ref,  1, vm['name_label']) and False)
+                GObject.idle_add(lambda: self.treestore.set_value(iter_ref,  1, vm['name_label']) and False)
 
             if self.wine.selected_ref == self.treestore.get_value(iter_ref, 6):
-                gobject.idle_add(lambda: self.wine.update_tabs() and False)
-                gobject.idle_add(lambda: self.wine.builder.get_object("headimage").set_from_pixbuf(
+                GObject.idle_add(lambda: self.wine.update_tabs() and False)
+                GObject.idle_add(lambda: self.wine.builder.get_object("headimage").set_from_pixbuf(
                     self.treestore.get_value(iter_ref, 0)) and False)
-                gobject.idle_add(lambda: self.wine.builder.get_object("headlabel").set_label(
+                GObject.idle_add(lambda: self.wine.builder.get_object("headlabel").set_label(
                     self.treestore.get_value(iter_ref,  1)) and False)
 
     def update_storage_status(self, model, path, iter_ref, user_data):
         if self.treestore.get_value(iter_ref, 2) == self.filter_uuid:
             storage = self.all['SR'][self.storage_filter_uuid()]
-            gobject.idle_add(lambda: self.treestore.set_value(iter_ref,  1, storage['name_label']) and False)
+            GObject.idle_add(lambda: self.treestore.set_value(iter_ref,  1, storage['name_label']) and False)
             if self.wine.selected_ref == self.treestore.get_value(iter_ref, 6):
-                gobject.idle_add(lambda: self.wine.update_tabs() and False)
-                gobject.idle_add(lambda: self.wine.builder.get_object("headimage").set_from_pixbuf(
+                GObject.idle_add(lambda: self.wine.update_tabs() and False)
+                GObject.idle_add(lambda: self.wine.builder.get_object("headimage").set_from_pixbuf(
                     self.treestore.get_value(iter_ref, 0)) and False)
-                gobject.idle_add(lambda: self.wine.builder.get_object("headlabel").set_label(
+                GObject.idle_add(lambda: self.wine.builder.get_object("headlabel").set_label(
                     self.treestore.get_value(iter_ref,  1)) and False)
             sr = self.treestore.get_value(iter_ref, 6)
             if len(self.all['SR'][sr]['PBDs']) == 0:
-                gobject.idle_add(lambda: self.treestore.set_value(iter_ref,  0, gtk.gdk.pixbuf_new_from_file(
+                GObject.idle_add(lambda: self.treestore.set_value(iter_ref,  0, GdkPixbuf.Pixbuf.new_from_file(
                     os.path.join(utils.module_path(), "images/storage_detached_16.png"))) and False)
             broken = False
             for pbd_ref in self.all['SR'][sr]['PBDs']:
                 if not self.all['PBD'][pbd_ref]['currently_attached']:
                     broken = True
-                    gobject.idle_add(lambda: self.treestore.set_value(iter_ref,  0, gtk.gdk.pixbuf_new_from_file(
+                    GObject.idle_add(lambda: self.treestore.set_value(iter_ref,  0, GdkPixbuf.Pixbuf.new_from_file(
                         os.path.join(utils.module_path(), "images/storage_broken_16.png"))) and False)
             if not broken:
-                gobject.idle_add(lambda: self.treestore.set_value(iter_ref,  0, gtk.gdk.pixbuf_new_from_file(
+                GObject.idle_add(lambda: self.treestore.set_value(iter_ref,  0, GdkPixbuf.Pixbuf.new_from_file(
                     os.path.join(utils.module_path(), "images/storage_shaped_16.png"))) and False)
 
     def delete_storage(self, model, path, iter_ref, user_data):
@@ -2266,25 +2267,25 @@ class oxcSERVER(oxcSERVERvm, oxcSERVERhost, oxcSERVERproperties,
         if self.treestore.get_value(iter_ref, 2) == self.filter_uuid:
                 if self.treestore.get_value(iter_ref, 1):
                     host = self.all['host'][self.host_filter_uuid()]
-                    gobject.idle_add(lambda: self.treestore.set_value(iter_ref,  1, host['name_label']) and False)
+                    GObject.idle_add(lambda: self.treestore.set_value(iter_ref,  1, host['name_label']) and False)
                     if host["enabled"]:
-                        gobject.idle_add(lambda: self.treestore.set_value(iter_ref, 0,  gtk.gdk.pixbuf_new_from_file(
+                        GObject.idle_add(lambda: self.treestore.set_value(iter_ref, 0,  GdkPixbuf.Pixbuf.new_from_file(
                             os.path.join(utils.module_path(), "images/tree_connected_16.png"))) and False)
                     else:
-                        gobject.idle_add(lambda: self.treestore.set_value(iter_ref, 0,  gtk.gdk.pixbuf_new_from_file(
+                        GObject.idle_add(lambda: self.treestore.set_value(iter_ref, 0,  GdkPixbuf.Pixbuf.new_from_file(
                             os.path.join(utils.module_path(), "images/tree_disabled_16.png"))) and False)
-                    gobject.idle_add(lambda: self.wine.update_tabs() and False)
-                    gobject.idle_add(lambda: self.wine.update_toolbar() and False)
-                    gobject.idle_add(lambda: self.wine.update_menubar()  and False)
-                    gobject.idle_add(lambda: self.wine.builder.get_object("headimage").set_from_pixbuf(
+                    GObject.idle_add(lambda: self.wine.update_tabs() and False)
+                    GObject.idle_add(lambda: self.wine.update_toolbar() and False)
+                    GObject.idle_add(lambda: self.wine.update_menubar()  and False)
+                    GObject.idle_add(lambda: self.wine.builder.get_object("headimage").set_from_pixbuf(
                         self.treestore.get_value(iter_ref, 0)) and False)
-                    gobject.idle_add(lambda: self.wine.builder.get_object("headlabel").set_label(
+                    GObject.idle_add(lambda: self.wine.builder.get_object("headlabel").set_label(
                         self.treestore.get_value(iter_ref,  1)) and False)
 
     def delete_host(self, model, path, iter_ref, user_data):
         if self.treestore.get_value(iter_ref, 2) == self.filter_uuid:
-            gobject.idle_add(lambda: self.treestore.remove(iter_ref) and False)
-            gobject.idle_add(lambda: self.wine.update_tabs() and False)
+            GObject.idle_add(lambda: self.treestore.remove(iter_ref) and False)
+            GObject.idle_add(lambda: self.wine.update_tabs() and False)
 
     def log_filter_uuid(self, item):
         return item["obj_uuid"] == self.filter_uuid

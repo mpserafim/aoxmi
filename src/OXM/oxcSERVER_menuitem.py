@@ -1,7 +1,7 @@
 # -----------------------------------------------------------------------
-# OpenXenManager
+# aoxmi
 #
-# Copyright (C) 2014 Daniel Lintott <daniel@serverb.co.uk>
+# Copyright (C) 2021 mpserafim <mpserafim@mps.eti.br>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -19,11 +19,11 @@
 # USA.
 #
 # -----------------------------------------------------------------------
-import gtk
+from gi.repository import Gtk
 from os import path
 import xml.dom.minidom
 from operator import itemgetter
-import gobject
+from gi.repository import GObject
 from OXM.capabilities import capabilities_text
 import utils
 
@@ -226,7 +226,7 @@ class oxcSERVERmenuitem:
                     time = "%s-%s" % (mintime, maxtime)
 
                 list.append([ref, checked == "yes", name,
-                             gtk.gdk.pixbuf_new_from_file(
+                             GdkPixbuf.Pixbuf.new_from_file(
                                  path.join(utils.module_path(),
                                            "images/confidentiality%s.png" %
                                            confidentiality)), desc, size,
@@ -239,11 +239,11 @@ class oxcSERVERmenuitem:
                                 key=itemgetter('name_label'))):
             vm_uuid = self.vm_filter_uuid(vm["uuid"])
             if vm["is_a_snapshot"]:
-                list.append([gtk.gdk.pixbuf_new_from_file(
+                list.append([GdkPixbuf.Pixbuf.new_from_file(
                     path.join(utils.module_path(), "images/snapshots.png")),
                     vm["name_label"], vm_uuid, "Snapshots"])
             else:
-                list.append([gtk.gdk.pixbuf_new_from_file(
+                list.append([GdkPixbuf.Pixbuf.new_from_file(
                     path.join(utils.module_path(),
                               "images/user_template_16.png")),
                             vm["name_label"], vm_uuid, "Custom"])
@@ -278,7 +278,7 @@ class oxcSERVERmenuitem:
                 image = path.join(utils.module_path(),
                                   "images/template_16.png")
                 category = "Misc"
-            list.append([gtk.gdk.pixbuf_new_from_file(image),
+            list.append([GdkPixbuf.Pixbuf.new_from_file(image),
                          vm["name_label"], vm_uuid, category])
 
     def fill_list_isoimages(self, list):
@@ -340,11 +340,11 @@ class oxcSERVERmenuitem:
                 network = self.all['network'][self.all['PIF'][pif]['network']]['name_label']
                 if self.all['PIF'][pif]['device'][-1:] == "0":
                     text = "<b>Primary</b>" + "\n    <i>" + network + "</i>"
-                    list.append([pif, gtk.gdk.pixbuf_new_from_file(path.join(utils.module_path(),
+                    list.append([pif, GdkPixbuf.Pixbuf.new_from_file(path.join(utils.module_path(),
                                                                              "images/prop_networksettings.png")), text])
                 else:
                     text = "<b>Interface " + str(self.all['PIF'][pif]['device'][-1:]) + "</b>\n     <i>" + network + "</i>"
-                    list.append([pif, gtk.gdk.pixbuf_new_from_file(path.join(utils.module_path(),
+                    list.append([pif, GdkPixbuf.Pixbuf.new_from_file(path.join(utils.module_path(),
                                                                              "images/prop_network.png")), text])
 
     def fill_listnewvmhosts(self, list):
@@ -365,11 +365,11 @@ class oxcSERVERmenuitem:
                                                                   self.convert_bytes(host_metrics['memory_total']))
             if self.all['host'][host]['enabled']:
                 vm_path = i
-                list.append([gtk.gdk.pixbuf_new_from_file(path.join(utils.module_path(),
+                list.append([GdkPixbuf.Pixbuf.new_from_file(path.join(utils.module_path(),
                                                                     "images/tree_connected_16.png")),
                              self.all['host'][host]['name_label'], host_memory, host])
             else:
-                list.append([gtk.gdk.pixbuf_new_from_file(path.join(utils.module_path(),
+                list.append([GdkPixbuf.Pixbuf.new_from_file(path.join(utils.module_path(),
                                                                     "images/tree_disconnected_16.png")),
                              self.all['host'][host]['name_label'], host_memory, host])
             i += 1
@@ -404,11 +404,11 @@ class oxcSERVERmenuitem:
             host = self.all['host'][self.all['PBD'][pbd_ref]["host"]]["name_label"]
             host_ref = self.all['PBD'][pbd_ref]["host"]
             if not self.all['PBD'][pbd_ref]['currently_attached']:
-                list.append([pbd_ref, gtk.gdk.pixbuf_new_from_file(path.join(utils.module_path(),
+                list.append([pbd_ref, GdkPixbuf.Pixbuf.new_from_file(path.join(utils.module_path(),
                                                                              "images/storage_broken_16.png")), host,
                              "<span foreground='red'><b>Unplugged</b></span>", host_ref, True])
             else:
-                list.append([pbd_ref, gtk.gdk.pixbuf_new_from_file(path.join(utils.module_path(),
+                list.append([pbd_ref, GdkPixbuf.Pixbuf.new_from_file(path.join(utils.module_path(),
                                                                              "images//storage_shaped_16.png")), host,
                              "<span foreground='green'><b>Connected</b></span>", host_ref, False])
 
@@ -426,20 +426,20 @@ class oxcSERVERmenuitem:
             if len(task["error_info"]):
                 print task["error_info"]
                 error = True
-                gobject.idle_add(lambda: self.wine.builder.get_object(
+                GObject.idle_add(lambda: self.wine.builder.get_object(
                     "lblrepairerror").set_markup("<span foreground='red'><b>"
                                                  "Host could not be contacted"
                                                  "</b></span>") and False)
             for i in range(0, list.__len__()):
                 if list.get_value(list.get_iter((i,)), 0) == pbd_ref:
                     if error:
-                        gobject.idle_add(lambda: list.set_value(list.get_iter((i,)), 3, "<span foreground='red'><b>Unplugged</b></span>") and False)
+                        GObject.idle_add(lambda: list.set_value(list.get_iter((i,)), 3, "<span foreground='red'><b>Unplugged</b></span>") and False)
                     else:
-                        gobject.idle_add(lambda: list.set_value(list.get_iter((i,)), 3, "<span foreground='green'><b>Connected</b></span>") and False)
+                        GObject.idle_add(lambda: list.set_value(list.get_iter((i,)), 3, "<span foreground='green'><b>Connected</b></span>") and False)
         if not error:
-            gobject.idle_add(lambda: self.wine.builder.get_object("lblrepairerror").set_markup("<span foreground='green'><b>All repaired.</b></span>") and False)
-        gobject.idle_add(lambda: self.wine.builder.get_object("acceptrepairstorage").set_sensitive(True) and False)
-        gobject.idle_add(lambda: self.wine.builder.get_object("cancelrepairstorage").set_label("Close") and False)
+            GObject.idle_add(lambda: self.wine.builder.get_object("lblrepairerror").set_markup("<span foreground='green'><b>All repaired.</b></span>") and False)
+        GObject.idle_add(lambda: self.wine.builder.get_object("acceptrepairstorage").set_sensitive(True) and False)
+        GObject.idle_add(lambda: self.wine.builder.get_object("cancelrepairstorage").set_label("Close") and False)
 
     def remove_server_from_pool(self, ref):
         self.connection.pool.eject(self.session_uuid, ref)
@@ -588,12 +588,12 @@ class oxcSERVERmenuitem:
                                           "images/storage_shaped_16.png")
 
                     list_ref.append(
-                        [gtk.gdk.pixbuf_new_from_file(image), sr,
+                        [GdkPixbuf.Pixbuf.new_from_file(image), sr,
                          storage['name_label'],
                          "%s free of %s" % (free, phys_size_bytes)])
 
                 # else:  FIXME: set_sensitive(False) row
-                #    list.append([gtk.gdk.pixbuf_new_from_file(path.join(utils.module_path(),
+                #    list.append([GdkPixbuf.Pixbuf.new_from_file(path.join(utils.module_path(),
                 #                                                        "images/storage_broken_16.png")), sr,
                 #                 storage['name_label'],
                 #         self.convert_bytes(int(storage['physical_size'])-int(storage['virtual_allocation'])) + " free of " + \

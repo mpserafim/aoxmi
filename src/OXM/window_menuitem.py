@@ -1,8 +1,7 @@
 # -----------------------------------------------------------------------
-# OpenXenManager
+# aoxmi
 #
-# Copyright (C) 2009 Alberto Gonzalez Rodriguez alberto@pesadilla.org
-# Copyright (C) 2014 Daniel Lintott <daniel@serverb.co.uk>
+# Copyright (C) 2021 mpserafim <mpserafim@mps.eti.br>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -16,7 +15,8 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,
+# USA.
 #
 # -----------------------------------------------------------------------
 from oxcSERVER import *
@@ -75,7 +75,7 @@ class oxcWindowMenuItem:
         """
         Forget password: don't remember password for server
         """
-        # Only put to "" the server password on oxc.conf
+        # Only put to "" the server password on aoxmi.conf
         if self.selected_name in self.config_hosts:
             self.config_hosts[self.selected_name][1] = ""
         elif self.selected_ip in self.config_hosts:
@@ -156,9 +156,9 @@ class oxcWindowMenuItem:
             if self.xc_servers[server].is_connected:
                 pool_ref = self.xc_servers[server].all['pool'].keys()[0]
                 if self.xc_servers[server].all['pool'][pool_ref]["name_label"] == "":
-                    image = gtk.Image()
+                    image = Gtk.Image()
                     image.set_from_file(path.join(utils.module_path(), "images/tree_running_16.png"))
-                    item = gtk.ImageMenuItem(gtk.STOCK_HELP, None)
+                    item = Gtk.ImageMenuItem(Gtk.STOCK_HELP, None)
                     item.use_underline = False
                     item.set_image(image)
                     # Host ref
@@ -180,9 +180,9 @@ class oxcWindowMenuItem:
             if self.xc_servers[server].is_connected:
                 pool_ref = self.xc_servers[server].all['pool'].keys()[0]
                 if self.xc_servers[server].all['pool'][pool_ref]["name_label"] != "":
-                    image = gtk.Image()
+                    image = Gtk.Image()
                     image.set_from_file(path.join(utils.module_path(), "images/poolconnected_16.png"))
-                    item = gtk.ImageMenuItem(gtk.STOCK_HELP, None)
+                    item = Gtk.ImageMenuItem(Gtk.STOCK_HELP, None)
                     item.use_underline = False
                     item.set_image(image)
                     # Host ref
@@ -204,9 +204,9 @@ class oxcWindowMenuItem:
             if self.xc_servers[server].is_connected:
                 pool_ref = self.xc_servers[server].all['pool'].keys()[0]
                 if self.xc_servers[server].all['pool'][pool_ref]["name_label"] == "":
-                    image = gtk.Image()
+                    image = Gtk.Image()
                     image.set_from_file(path.join(utils.module_path(), "images/tree_running_16.png"))
-                    item = gtk.ImageMenuItem(gtk.STOCK_HELP, None)
+                    item = Gtk.ImageMenuItem(Gtk.STOCK_HELP, None)
                     item.use_underline = False
                     item.set_image(image)
                     # Host ref
@@ -228,9 +228,9 @@ class oxcWindowMenuItem:
             if self.xc_servers[server].is_connected:
                 pool_ref = self.xc_servers[server].all['pool'].keys()[0]
                 if self.xc_servers[server].all['pool'][pool_ref]["name_label"] != "":
-                    image = gtk.Image()
+                    image = Gtk.Image()
                     image.set_from_file(path.join(utils.module_path(), "images/poolconnected_16.png"))
-                    item = gtk.ImageMenuItem(gtk.STOCK_HELP, None)
+                    item = Gtk.ImageMenuItem(Gtk.STOCK_HELP, None)
                     item.use_underline = False
                     item.set_image(image)
                     # Host ref
@@ -251,9 +251,9 @@ class oxcWindowMenuItem:
                 self.builder.get_object("menu_resume_on").get_children()[2])
         # Go all servers and add to submenu (right menu)
         for h in self.xc_servers[self.selected_host].all['host']:
-            image = gtk.Image()
+            image = Gtk.Image()
             image.set_from_file(path.join(utils.module_path(), "images/xen.gif"))
-            item = gtk.ImageMenuItem(gtk.STOCK_HELP, None)
+            item = Gtk.ImageMenuItem(Gtk.STOCK_HELP, None)
             item.use_underline = False
             item.set_image(image)
             """
@@ -288,9 +288,9 @@ class oxcWindowMenuItem:
             self.builder.get_object("menu_start_on").remove(self.builder.get_object("menu_start_on").get_children()[2])
         # Go all servers and add to submenu (right menu)
         for h in self.xc_servers[self.selected_host].all['host']:
-            image = gtk.Image()
+            image = Gtk.Image()
             image.set_from_file(path.join(utils.module_path(), "images/xen.gif"))
-            item = gtk.ImageMenuItem(gtk.STOCK_HELP, None)
+            item = Gtk.ImageMenuItem(Gtk.STOCK_HELP, None)
             item.use_underline = False
             item.set_image(image)
             """
@@ -326,9 +326,9 @@ class oxcWindowMenuItem:
                 self.builder.get_object("menu_pool_migrate").get_children()[2])
         # Go all servers and add to submenu (right menu)
         for h in self.xc_servers[self.selected_host].all['host']:
-            image = gtk.Image()
+            image = Gtk.Image()
             image.set_from_file(path.join(utils.module_path(), "images/xen.gif"))
-            item = gtk.ImageMenuItem(gtk.STOCK_HELP, None)
+            item = Gtk.ImageMenuItem(Gtk.STOCK_HELP, None)
             item.use_underline = False
             item.set_image(image)
             """
@@ -425,25 +425,25 @@ class oxcWindowMenuItem:
         toolbar = self.builder.get_object("toolbar")
         # for each children of toolbar
         for child in toolbar.get_children():
-            if gtk.Buildable.get_name(child)[0:3] == "tb_":
+            if Gtk.Buildable.get_name(child)[0:3] == "tb_":
                 # self.selected_actions contains possible actions
                 # if not exists: disable button
                 # else: enable button
                 if not self.selected_actions or \
-                   self.selected_actions.count(gtk.Buildable.get_name(child)[3:]) \
+                   self.selected_actions.count(Gtk.Buildable.get_name(child)[3:]) \
                    == 0:
                     child.set_sensitive(False)
                 else:
                     child.set_sensitive(True)
-                    if gtk.Buildable.get_name(child)[3:] == "hard_shutdown":
+                    if Gtk.Buildable.get_name(child)[3:] == "hard_shutdown":
                         if not self.selected_actions.count("clean_shutdown"):
                             self.builder.get_object("tb_clean_shutdown").hide()
                             self.builder.get_object("tb_hard_shutdown").show()
-                    if gtk.Buildable.get_name(child)[3:] == "hard_reboot":
+                    if Gtk.Buildable.get_name(child)[3:] == "hard_reboot":
                         if not self.selected_actions.count("clean_reboot"):
                             self.builder.get_object("tb_clean_reboot").hide()
                             self.builder.get_object("tb_hard_reboot").show()
-                    if gtk.Buildable.get_name(child)[3:] == "clean_shutdown":
+                    if Gtk.Buildable.get_name(child)[3:] == "clean_shutdown":
                         self.builder.get_object("tb_clean_shutdown").show()
                         self.builder.get_object("tb_clean_reboot").show()
                         self.builder.get_object("tb_hard_reboot").hide()
@@ -597,10 +597,10 @@ class oxcWindowMenuItem:
         """
         "Import VM" menuitem pressed on right click menu
         """
-        blue = gtk.gdk.color_parse("#d5e5f7")
+        blue = Gdk.color_parse("#d5e5f7")
         # Disable "next button", it will be enabled when file is selected
         self.builder.get_object("nextvmimport").set_sensitive(False)
-        self.builder.get_object("eventimport0").modify_bg(gtk.STATE_NORMAL, blue)
+        self.builder.get_object("eventimport0").modify_bg(Gtk.StateType.NORMAL, blue)
         # Set a filter, you only can selected *.xva files
         self.builder.get_object("filefilterimportvm").add_pattern("*.xva")
         # Show the import window
@@ -613,12 +613,12 @@ class oxcWindowMenuItem:
             # If we are connected to this server
             if host in self.xc_servers:
                 # Then add to list
-                listimportservers.append([gtk.gdk.pixbuf_new_from_file(path.join(utils.module_path(),
+                listimportservers.append([GdkPixbuf.Pixbuf.new_from_file(path.join(utils.module_path(),
                                                                                  "images/tree_connected_16.png")),
                                           self.xc_servers[host].hostname, True, host])
             """
             else:
-                listimportservers.append([gtk.gdk.pixbuf_new_from_file(path.join(utils.module_path(),
+                listimportservers.append([GdkPixbuf.Pixbuf.new_from_file(path.join(utils.module_path(),
                 "images/tree_disconnected_16.png")),
                     host,False]);
             """
@@ -688,8 +688,8 @@ class oxcWindowMenuItem:
         """
         # Checks if exists a "master password"
         # Master password if need to save reverse passwords with XTEA
-        # XTEA is a block cipher to save server password on oxc.conf
-        # If master password if used (saved on oxc.conf as md5) use it to
+        # XTEA is a block cipher to save server password on aoxmi.conf
+        # If master password if used (saved on aoxmi.conf as md5) use it to
         # xtea decrypt
         if self.selected_name not in self.config_hosts:
             return
@@ -755,7 +755,7 @@ class oxcWindowMenuItem:
             iter = self.treestore.get_iter(vm_path)
             self.treestore.remove(iter)
         # Add again the ip/host name
-        self.treestore.append(self.treeroot, ([gtk.gdk.pixbuf_new_from_file(
+        self.treestore.append(self.treeroot, ([GdkPixbuf.Pixbuf.new_from_file(
             path.join(utils.module_path(), "images/tree_disconnected_16.png")), host, None, "server", "Disconnected",
             None, None, ["connect", "forgetpw", "remove"], None]))
         # If copy window is showed.. hide
@@ -916,7 +916,7 @@ class oxcWindowMenuItem:
         """
         "New Storage Repository" menuitem pressed on menubar 
         """
-        blue = gtk.gdk.color_parse("#d5e5f7")
+        blue = Gdk.color_parse("#d5e5f7")
         # Disable "next button", it will be enabled when file is selected
         enable = ["radionewstgnfsvhd", "radionewstgiscsi", "radionewstghwhba",
                   "radionewstgnetapp", "radionewstgdell", "radionewstgcifs",
@@ -928,7 +928,7 @@ class oxcWindowMenuItem:
         # TODO: James GUI - I disabled the following line to continue fixing the storage.glade file
         # 		I'll need to reimplement this colour highlighting thing as it doesn't work anyway 
         #		and this is a tad ugly.
-        # self.builder.get_object("eventnewstg0").modify_bg(gtk.STATE_NORMAL, blue)
+        # self.builder.get_object("eventnewstg0").modify_bg(Gtk.StateType.NORMAL, blue)
         self.builder.get_object("tabboxnewstorage").set_current_page(0)
         self.builder.get_object("newstorage").show() 
 
@@ -1590,7 +1590,7 @@ class oxcWindowMenuItem:
             # For each child of this menu..
             for child in self.builder.get_object(menu).get_children():
                 # Check if is on "show" variable
-                if show[menu].count(gtk.Buildable.get_name(child)):
+                if show[menu].count(Gtk.Buildable.get_name(child)):
                     # If is on: enable menuitem
                     child.set_sensitive(True)
                 else:
@@ -1601,17 +1601,17 @@ class oxcWindowMenuItem:
         # TODO: fix it URGENT
         for i in range(1, 1):
             self.builder.get_object("logwindow").show()
-            vboxframe = gtk.Frame()
+            vboxframe = Gtk.Frame()
             if i % 2 == 0:
                 vboxframe.set_size_request(500, 100)
             else:
                 vboxframe.set_size_request(500, 80)
-            vboxchild = gtk.Fixed()
-            vboxchildlabel1 = gtk.Label()
-            vboxchildlabel2 = gtk.Label()
-            vboxchildlabel3 = gtk.Label()
-            vboxchildlabel4 = gtk.Label()
-            vboxchildlabel5 = gtk.Label()
+            vboxchild = Gtk.Fixed()
+            vboxchildlabel1 = Gtk.Label()
+            vboxchildlabel2 = Gtk.Label()
+            vboxchildlabel3 = Gtk.Label()
+            vboxchildlabel4 = Gtk.Label()
+            vboxchildlabel5 = Gtk.Label()
             #FIXME
             #vboxchildprogressbar.set_style(1)
             vboxchildlabel1.set_label("Starting ... ")
@@ -1626,8 +1626,8 @@ class oxcWindowMenuItem:
 
             # Active task
             if i % 2 == 0:
-                vboxchildcancel = gtk.Button()
-                vboxchildprogressbar = gtk.ProgressBar()
+                vboxchildcancel = Gtk.Button()
+                vboxchildprogressbar = Gtk.ProgressBar()
                 vboxchildprogressbar.set_size_request(800, 20)
                 vboxchildprogressbar.set_fraction(float(1/float(i)))
                 vboxchild.put(vboxchildcancel, 800, 32)
@@ -1638,9 +1638,9 @@ class oxcWindowMenuItem:
 
             vboxframe.add(vboxchild)
             if i % 2 == 0:
-                vboxframe.modify_bg(gtk.STATE_NORMAL, gtk.gdk.color_parse("red"))
+                vboxframe.modify_bg(Gtk.StateType.NORMAL, Gdk.color_parse("red"))
             else:
-                vboxframe.modify_bg(gtk.STATE_NORMAL, gtk.gdk.color_parse("black"))
+                vboxframe.modify_bg(Gtk.StateType.NORMAL, Gdk.color_parse("black"))
 
             self.builder.get_object("vboxlog").add(vboxframe)
             self.builder.get_object("vboxlog").show_all()

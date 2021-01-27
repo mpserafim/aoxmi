@@ -1,23 +1,28 @@
 #!/usr/bin/env python
+# -----------------------------------------------------------------------
+# aoxmi
 #
-#       plot.py
-#       
-#       Copyright 2008 Sven Festersen <sven@sven-festersen.de>
-#       
-#       This program is free software; you can redistribute it and/or modify
-#       it under the terms of the GNU General Public License as published by
-#       the Free Software Foundation; either version 2 of the License, or
-#       (at your option) any later version.
-#       
-#       This program is distributed in the hope that it will be useful,
-#       but WITHOUT ANY WARRANTY; without even the implied warranty of
-#       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#       GNU General Public License for more details.
-#       
-#       You should have received a copy of the GNU General Public License
-#       along with this program; if not, write to the Free Software
-#       Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
-#       MA 02110-1301, USA.
+# Copyright (C) 2021 mpserafim <mpserafim@mps.eti.br>
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,
+# USA.
+#
+# -----------------------------------------------------------------------
+#
+# Based on work of Sven Festersen <sven@sven-festersen.de>
+#
 
 """
 Module Contents
@@ -29,18 +34,16 @@ This is the main module. It contains the base classes for chart widgets.
 
 Colors
 ------
-All colors that pygtkChart uses are gtk.gdk.Colors as used by PyGTK.
-
-Author: Sven Festersen (sven@sven-festersen.de)
+All colors that pygtkChart uses are Gdk.Colors as used by PyGTK.
 """
 __docformat__ = "epytext"
 import cairo
-import gobject
-import gtk
+from gi.repository import GObject
+from gi.repository import Gtk
 import os
-import pango
+from gi.repository import Pango
 import pangocairo
-import pygtk
+import gi
 
 from pygtk_chart.chart_object import ChartObject
 from pygtk_chart.basics import *
@@ -75,28 +78,28 @@ def get_sensitive_areas(x, y):
     return res
 
 
-class Chart(gtk.DrawingArea):
+class Chart(Gtk.DrawingArea):
     """
     This is the base class for all chart widgets.
     
     Properties
     ==========
-    The Chart class inherits properties from gtk.DrawingArea.
+    The Chart class inherits properties from Gtk.DrawingArea.
     Additional properties:
      - padding (the amount of free white space between the chart's
        content and its border in px, type: int in [0, 100].
        
     Signals
     =======
-    The Chart class inherits signals from gtk.DrawingArea.
+    The Chart class inherits signals from Gtk.DrawingArea.
     """
     
-    __gproperties__ = {"padding": (gobject.TYPE_INT, "padding",
+    __gproperties__ = {"padding": (GObject.TYPE_INT, "padding",
                                     "The chart's padding.", 0, 100, 0,
-                                    gobject.PARAM_READWRITE)}
+                                    GObject.PARAM_READWRITE)}
     
     def __init__(self):
-        gtk.DrawingArea.__init__(self)
+        GObject.GObject.__init__(self)
         #private properties:
         self._padding = 0
         #objects needed for every chart:
@@ -105,7 +108,7 @@ class Chart(gtk.DrawingArea):
         self.title = Title()
         self.title.connect("appearance-changed", self._cb_appearance_changed)
         
-        self.add_events(gtk.gdk.BUTTON_PRESS_MASK|gtk.gdk.SCROLL_MASK|gtk.gdk.POINTER_MOTION_MASK)
+        self.add_events(Gdk.EventMask.BUTTON_PRESS_MASK|Gdk.EventMask.SCROLL_MASK|Gdk.EventMask.POINTER_MOTION_MASK)
         self.connect("expose_event", self._cb_expose_event)
         self.connect("button_press_event", self._cb_button_pressed)
         self.connect("motion-notify-event", self._cb_motion_notify)
@@ -140,9 +143,9 @@ class Chart(gtk.DrawingArea):
         This method is called when an instance of Chart receives
         the gtk expose_event.
         
-        @type widget: gtk.Widget
+        @type widget: Gtk.Widget
         @param widget: The widget that received the event.
-        @type event: gtk.Event
+        @type event: Gtk.Event
         @param event: The event.
         """
         self.context = widget.window.cairo_create()
@@ -158,7 +161,7 @@ class Chart(gtk.DrawingArea):
         
         @type context: cairo.Context
         @param context: The context to draw on.
-        @type rect: gtk.gdk.Rectangle
+        @type rect: 
         @param rect: A rectangle representing the charts area.
         """
         self.background.draw(context, rect)
@@ -172,7 +175,7 @@ class Chart(gtk.DrawingArea):
         rect_width = int(rect.width - 2 * self._padding)
         rect_x = int(rect.x + self._padding)
         rect_y = int(rect.y + title_height + 2 * self._padding)
-        return gtk.gdk.Rectangle(rect_x, rect_y, rect_width, rect_height)
+        return (rect_x, rect_y, rect_width, rect_height)
         
     def draw(self, context):
         """
@@ -184,7 +187,7 @@ class Chart(gtk.DrawingArea):
         @param context: The context to draw on.
         """
         rect = self.get_allocation()
-        rect = gtk.gdk.Rectangle(0, 0, rect.width, rect.height) #transform rect to context coordinates
+        rect = (0, 0, rect.width, rect.height) #transform rect to context coordinates
         context.set_line_width(1)
         rect = self.draw_basics(context, rect)
         
@@ -205,7 +208,7 @@ class Chart(gtk.DrawingArea):
         else:
             width, height = size
             old_alloc = self.get_allocation
-            self.get_allocation = lambda: gtk.gdk.Rectangle(0, 0, width, height)
+            self.get_allocation = lambda: (0, 0, width, height)
         surface = cairo.SVGSurface(filename, width, height)
         ctx = cairo.Context(surface)
         context = pangocairo.CairoContext(ctx)
@@ -231,7 +234,7 @@ class Chart(gtk.DrawingArea):
         else:
             width, height = size
             old_alloc = self.get_allocation
-            self.get_allocation = lambda: gtk.gdk.Rectangle(0, 0, width, height)
+            self.get_allocation = lambda: (0, 0, width, height)
         surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, width, height)
         ctx = cairo.Context(surface)
         context = pangocairo.CairoContext(ctx)
@@ -269,8 +272,8 @@ class Background(ChartObject):
     ==========
     This class inherits properties from chart_object.ChartObject.
     Additional properties:
-     - color (the background color, type: gtk.gdk.Color)
-     - gradient (the background gradient, type: a pair of gtk.gdk.Color)
+     - color (the background color, type: Gdk.Color)
+     - gradient (the background gradient, type: a pair of Gdk.Color)
      - image (path to the background image file, type: string)
      
     Signals
@@ -278,22 +281,22 @@ class Background(ChartObject):
     The Background class inherits signals from chart_object.ChartObject.
     """    
     
-    __gproperties__ = {"color": (gobject.TYPE_PYOBJECT,
+    __gproperties__ = {"color": (GObject.TYPE_PYOBJECT,
                                     "background color",
                                     "The color of the backround.",
-                                    gobject.PARAM_READWRITE),
-                        "gradient": (gobject.TYPE_PYOBJECT,
+                                    GObject.PARAM_READWRITE),
+                        "gradient": (GObject.TYPE_PYOBJECT,
                                     "background gradient",
                                     "A background gardient. (first_color, second_color)",
-                                    gobject.PARAM_READWRITE),
-                        "image": (gobject.TYPE_STRING,
+                                    GObject.PARAM_READWRITE),
+                        "image": (GObject.TYPE_STRING,
                                     "background image file",
                                     "Path to the image file to use as background.",
-                                    "", gobject.PARAM_READWRITE)}
+                                    "", GObject.PARAM_READWRITE)}
     
     def __init__(self):
         ChartObject.__init__(self)
-        self._color = gtk.gdk.color_parse("#ffffff") #the backgound is filled white by default
+        self._color = Gdk.color_parse("#ffffff") #the backgound is filled white by default
         self._gradient = None
         self._image = ""
         self._pixbuf = None
@@ -332,7 +335,7 @@ class Background(ChartObject):
         
         @type context: cairo.Context
         @param context: The context to draw on.
-        @type rect: gtk.gdk.Rectangle
+        @type rect: 
         @param rect: A rectangle representing the charts area.
         """
         if self._color != None:
@@ -359,7 +362,7 @@ class Background(ChartObject):
         The set_color() method can be used to change the color of the
         background.
         
-        @type color: gtk.gdk.Color
+        @type color: Gdk.Color
         @param color: Set the background to be filles with this color.
         """
         self.set_property("color", color)
@@ -371,7 +374,7 @@ class Background(ChartObject):
         """
         Returns the background's color.
         
-        @return: gtk.gdk.Color.
+        @return: Gdk.Color.
         """
         return self.get_property("color")
         
@@ -379,9 +382,9 @@ class Background(ChartObject):
         """
         Use set_gradient() to define a vertical gradient as the background.
         
-        @type color_start: gtk.gdk.Color
+        @type color_start: Gdk.Color
         @param color_start: The starting (top) color of the gradient.
-        @type color_end: gtk.gdk.Color
+        @type color_end: Gdk.Color
         @param color_end: The ending (bottom) color of the gradient.
         """
         self.set_property("color", None)
@@ -393,7 +396,7 @@ class Background(ChartObject):
         """
         Returns the gradient of the background or None.
         
-        @return: A (gtk.gdk.Color, gtk.gdk.Color) tuple or None.
+        @return: A (Gdk.Color, Gdk.Color) tuple or None.
         """
         return self.get_property("gradient")
         
@@ -407,7 +410,7 @@ class Background(ChartObject):
         image. If the file does not exists, the background is set to white.
         """
         try:
-            self._pixbuf = gtk.gdk.pixbuf_new_from_file(filename)
+            self._pixbuf = GdkPixbuf.Pixbuf.new_from_file(filename)
         except:
             self._pixbuf = None
         
@@ -435,7 +438,7 @@ class Title(label.Label):
     """    
     
     def __init__(self, text=""):
-        label.Label.__init__(self, (0, 0), text, weight=pango.WEIGHT_BOLD, anchor=label.ANCHOR_TOP_CENTER, fixed=True)
+        label.Label.__init__(self, (0, 0), text, weight=Pango.Weight.BOLD, anchor=label.ANCHOR_TOP_CENTER, fixed=True)
         
     def _do_draw(self, context, rect, top=-1):
         if top == -1: top = rect.height / 80
@@ -455,7 +458,7 @@ class Area(ChartObject):
     Additional properties:
      - name (a unique name for the area, type: string, read only)
      - value (the value of the area, type: float)
-     - color (the area's color, type: gtk.gdk.Color)
+     - color (the area's color, type: Gdk.Color)
      - label (a label for the area, type: string)
      - highlighted (set whether the area should be highlighted,
        type: boolean).
@@ -465,22 +468,22 @@ class Area(ChartObject):
     The Area class inherits signals from chart_object.ChartObject.
     """
     
-    __gproperties__ = {"name": (gobject.TYPE_STRING, "area name",
+    __gproperties__ = {"name": (GObject.TYPE_STRING, "area name",
                                 "A unique name for the area.",
-                                "", gobject.PARAM_READABLE),
-                        "value": (gobject.TYPE_FLOAT,
+                                "", GObject.PARAM_READABLE),
+                        "value": (GObject.TYPE_FLOAT,
                                     "value",
                                     "The value.",
-                                    0.0, 9999999999.0, 0.0, gobject.PARAM_READWRITE),
-                        "color": (gobject.TYPE_PYOBJECT, "area color",
+                                    0.0, 9999999999.0, 0.0, GObject.PARAM_READWRITE),
+                        "color": (GObject.TYPE_PYOBJECT, "area color",
                                     "The color of the area.",
-                                    gobject.PARAM_READWRITE),
-                        "label": (gobject.TYPE_STRING, "area label",
+                                    GObject.PARAM_READWRITE),
+                        "label": (GObject.TYPE_STRING, "area label",
                                     "The label for the area.", "",
-                                    gobject.PARAM_READWRITE),
-                        "highlighted": (gobject.TYPE_BOOLEAN, "area is higlighted",
+                                    GObject.PARAM_READWRITE),
+                        "highlighted": (GObject.TYPE_BOOLEAN, "area is higlighted",
                                         "Set whether the area should be higlighted.",
-                                        False, gobject.PARAM_READWRITE)}
+                                        False, GObject.PARAM_READWRITE)}
     
     def __init__(self, name, value, title=""):
         ChartObject.__init__(self)
@@ -545,7 +548,7 @@ class Area(ChartObject):
         """
         Set the color of the area.
         
-        @type color: gtk.gdk.Color.
+        @type color: Gdk.Color.
         """
         self.set_property("color", color)
         self.emit("appearance_changed")
@@ -554,7 +557,7 @@ class Area(ChartObject):
         """
         Returns the current color of the area or COLOR_AUTO.
         
-        @return: gtk.gdk.Color or COLOR_AUTO.
+        @return: Gdk.Color or COLOR_AUTO.
         """
         return self.get_property("color")
         

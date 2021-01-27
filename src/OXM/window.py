@@ -1,8 +1,7 @@
 # -----------------------------------------------------------------------
-# OpenXenManager
+# aoxmi
 #
-# Copyright (C) 2009 Alberto Gonzalez Rodriguez alberto@pesadilla.org
-# Copyright (C) 2014 Daniel Lintott <daniel@serverb.co.uk>
+# Copyright (C) 2021 mpserafim <mpserafim@mps.eti.br>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -16,14 +15,18 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,
+# USA.
 #
 # -----------------------------------------------------------------------
 import os
 import sys
 import shutil
-import pygtk
-import pango
+import gi
+from gi.repository import Pango
+from gi.repository import GdkPixbuf
+from gi.repository import Gdk
+from gi.repository import GtkVnc
 
 from configobj import ConfigObj
 from tunnel import Tunnel
@@ -34,20 +37,20 @@ if os.path.dirname(sys.argv[0]):
 # On next releases we will use gettext for translations TODO: Investigate translations
 APP = 'oxc'
 DIR = 'locale'
-if sys.platform != "win32" and sys.platform != "darwin":
+#if sys.platform != "win32" and sys.platform != "darwin":
     # If sys.platform is Linux or Unix
-    import gtkvnc
+#    import gtkvnc
     # Only needed for translations
-    import gtk.glade
-    gtk.glade.bindtextdomain(APP, DIR)
-elif sys.platform == "darwin":
+#    import Gtk.glade
+#    Gtk.glade.bindtextdomain(APP, DIR)
+if sys.platform == "darwin":
     # On MacOSX with macports sys.platform is "darwin", we need Popen for run tightvnc
     from subprocess import Popen
-else:
-    # On Windows we need right tightvnc and we need win32 libraries for move the window
-    from subprocess import Popen
-    import win32gui
-    import win32con
+#else:
+#    # On Windows we need right tightvnc and we need win32 libraries for move the window
+#    from subprocess import Popen
+#    import win32gui
+#    import win32con
 
 from oxcSERVER import *
 import signal
@@ -57,7 +60,7 @@ from PixbufTextCellRenderer import PixbufTextCellRenderer
 import gettext
 gettext.install('oxc', localedir="./locale")
 
-gobject.threads_init()
+GObject.threads_init()
 
 # Import the split classes for oxcWindow
 from window_vm import *
@@ -78,11 +81,11 @@ class MyDotWindow(DotWindow):
         self.liststore = liststore
         self.treestore = treestore
         DotWindow.__init__(self, window)
-        self.widget.connect('button_press_event', self.on_double_clicked)
+        self.widget2.connect('button_press_event', self.on_double_clicked)
 
     def on_double_clicked(self, widget, event):
         # On double click go to element
-        if event.type == gtk.gdk._2BUTTON_PRESS: 
+        if event.type == Gdk._2BUTTON_PRESS: 
             x, y = int(event.x), int(event.y)
             if widget.get_url(x, y):
                 url = widget.get_url(x, y).url
@@ -93,7 +96,7 @@ class MyDotWindow(DotWindow):
     def search_ref(self, model, path, iter_ref, user_data):
         if self.liststore.get_value(iter_ref, 6) == user_data:
             self.treestore.get_selection().select_path(path)
-            event = gtk.gdk.Event(gtk.gdk.BUTTON_RELEASE)
+            event = Gdk.Event(Gdk.BUTTON_RELEASE)
             event.x = float(-10)
             event.y = float(-10)
             self.treestore.emit("button_press_event", event)
@@ -153,22 +156,22 @@ class oxcWindow(oxcWindowVM, oxcWindowHost, oxcWindowProperties,
     def __init__(self):
         atexit.register(self.signal_handler)
         signal.signal(15, self.signal_handler)
-        # Read the configuration from oxc.conf file
+        # Read the configuration from aoxmi.conf file
         if sys.platform != "win32":
             if not os.path.exists(os.path.join(os.path.expanduser("~"), ".config")):
                 os.mkdir(os.path.join(os.path.expanduser("~"), ".config"))
-            if not os.path.exists(os.path.join(os.path.expanduser("~"), ".config", "openxenmanager")):
-                os.mkdir(os.path.join(os.path.expanduser("~"), ".config", "openxenmanager"))
-            dirconfig = os.path.join(os.path.expanduser("~"), ".config", "openxenmanager")
-            pathconfig = os.path.join(os.path.expanduser("~"), ".config", "openxenmanager", "oxc.conf")
+            if not os.path.exists(os.path.join(os.path.expanduser("~"), ".config", "aoxmi")):
+                os.mkdir(os.path.join(os.path.expanduser("~"), ".config", "aoxmi"))
+            dirconfig = os.path.join(os.path.expanduser("~"), ".config", "aoxmi")
+            pathconfig = os.path.join(os.path.expanduser("~"), ".config", "aoxmi", "aoxmi.conf")
         else: 
-            if not os.path.exists(os.path.join(os.path.expanduser("~"), "openxenmanager")):
-                os.mkdir(os.path.join(os.path.expanduser("~"), "openxenmanager"))
-            dirconfig = os.path.join(os.path.expanduser("~"), "openxenmanager")
-            pathconfig = os.path.join(os.path.expanduser("~"), "openxenmanager", "oxc.conf")
+            if not os.path.exists(os.path.join(os.path.expanduser("~"), "aoxmi")):
+                os.mkdir(os.path.join(os.path.expanduser("~"), "aoxmi"))
+            dirconfig = os.path.join(os.path.expanduser("~"), "aoxmi")
+            pathconfig = os.path.join(os.path.expanduser("~"), "aoxmi", "aoxmi.conf")
 
         if not os.path.exists(pathconfig):
-            shutil.copy(os.path.join(utils.module_path(), "oxc.conf"), pathconfig)
+            shutil.copy(os.path.join(utils.module_path(), "aoxmi.conf"), pathconfig)
             
         self.config = ConfigObj(pathconfig) 
         self.pathconfig = dirconfig 
@@ -184,9 +187,9 @@ class oxcWindow(oxcWindowVM, oxcWindowHost, oxcWindowProperties,
             if g_file.endswith('.glade'):
                 glade_files.append(os.path.join(glade_dir, g_file))
 
-        self.builder = gtk.Builder()
+        self.builder = Gtk.Builder()
         self.builder.set_translation_domain("oxc")
-        # Add the glade files to gtk.Builder object
+        # Add the glade files to Gtk.Builder object
         for g_file in glade_files:
             try:
                 self.builder.add_from_file(g_file)
@@ -198,8 +201,8 @@ class oxcWindow(oxcWindowVM, oxcWindowHost, oxcWindowProperties,
         # delete-event is called when you close the window with "x" button
         # TODO: csun: eventually it should be possible not to do this: http://stackoverflow.com/questions/4657344/
         for widget in self.builder.get_objects():
-            if isinstance(widget, gtk.Dialog) or \
-               isinstance(widget, gtk.Window) and gtk.Buildable.get_name(widget) != "window1":
+            if isinstance(widget, Gtk.Dialog) or \
+               isinstance(widget, Gtk.Window) and Gtk.Buildable.get_name(widget) != "window1":
                 widget.connect("delete-event", self.on_delete_event)
         # Frequent objects
         self.txttreefilter = self.builder.get_object("txttreefilter")
@@ -235,7 +238,7 @@ class oxcWindow(oxcWindowVM, oxcWindowHost, oxcWindowProperties,
         """
 
         # Combo's style
-        style = gtk.rc_parse_string('''
+        style = Gtk.rc_parse_string('''
                 style "my-style" { GtkComboBox::appears-as-list = 1 }
                 widget "*" style "my-style"
         ''')
@@ -245,11 +248,11 @@ class oxcWindow(oxcWindowVM, oxcWindowHost, oxcWindowProperties,
         self.treestg.get_selection().connect('changed', self.on_treestg_selection_changed)
 
         # Create a new TreeStore
-        self.treestore = gtk.TreeStore(gtk.gdk.Pixbuf, str, str, str, str, str, str, object, str)
+        self.treestore = Gtk.TreeStore(GdkPixbuf.Pixbuf, str, str, str, str, str, str, object, str)
                                        # Image, Name, uuid, type, state, host, ref, actions, ip
         # Append default logo on created TreeStore
-        self.treeroot = self.treestore.append(None, ([gtk.gdk.pixbuf_new_from_file(
-            os.path.join(utils.module_path(), "images/xen.gif")), "OpenXenManager", None, "home", "home", None,
+        self.treeroot = self.treestore.append(None, ([GdkPixbuf.Pixbuf.new_from_file(
+            os.path.join(utils.module_path(), "images/xen.gif")), "aoxmi", None, "home", "home", None,
             None, ["addserver", "connectall", "disconnectall"], None]))
         
         # Model Filter is used but show/hide templates/custom templates/local storage..
@@ -272,13 +275,13 @@ class oxcWindow(oxcWindowVM, oxcWindowHost, oxcWindowProperties,
         self.treeprop.set_model(self.propmodelfilter) 
 
         # Fill defaults selection variables
-        self.selected_name = "OpenXenManager"
+        self.selected_name = "aoxmi"
         self.selected_type = "home"
         self.selected_uuid = ""
         self.headimage = self.builder.get_object("headimage")
         self.headlabel = self.builder.get_object("headlabel")
         self.headlabel.set_label(self.selected_name)
-        self.headimage.set_from_pixbuf(gtk.gdk.pixbuf_new_from_file(os.path.join(utils.module_path(),
+        self.headimage.set_from_pixbuf(GdkPixbuf.Pixbuf.new_from_file(os.path.join(utils.module_path(),
                                                                                  "images/xen.gif")))
 
         if 'pane_position' in self.config['gui']:
@@ -308,7 +311,7 @@ class oxcWindow(oxcWindowVM, oxcWindowHost, oxcWindowProperties,
         # Add to left tree the saved servers from configuration
         for host in self.config_hosts.keys():
             self.builder.get_object("listaddserverhosts").append([host])
-            self.treestore.append(self.treeroot, ([gtk.gdk.pixbuf_new_from_file(
+            self.treestore.append(self.treeroot, ([GdkPixbuf.Pixbuf.new_from_file(
                 os.path.join(utils.module_path(), "images/tree_disconnected_16.png")), host, None, "server",
                 "Disconnected", None, None, ["connect", "forgetpw", "remove"], None]))
 
@@ -322,9 +325,9 @@ class oxcWindow(oxcWindowVM, oxcWindowHost, oxcWindowProperties,
         # (image, name, loadimg, loadtext,
         #  memimg, memtext, disks, network, address, uptime
         #  color)
-        self.listsearch = gtk.TreeStore(gtk.gdk.Pixbuf, str, object, str,
+        self.listsearch = Gtk.TreeStore(GdkPixbuf.Pixbuf, str, object, str,
                                         object, str, str, str, str, str,
-                                        gtk.gdk.Color)
+                                        Gdk.Color)
         self.treesearch.set_model(self.listsearch)
         #self.treesearch.get_column(0).set_cell_data_func(self.func_cell_data_treesearch, self.treesearch.get_cell(0))
 
@@ -332,7 +335,7 @@ class oxcWindow(oxcWindowVM, oxcWindowHost, oxcWindowProperties,
         pbtcell = PixbufTextCellRenderer()
         pbtcell.set_property('xpad', 15)
         pbtcell.set_property('ypad', 13)
-        tvc = gtk.TreeViewColumn('CPU Usage', pbtcell, text=3, pixbuf=2, background=10)
+        tvc = Gtk.TreeViewColumn('CPU Usage', pbtcell, text=3, pixbuf=2, background=10)
         tvc.set_widget(self.builder.get_object("lbltreesearch6"))
         self.builder.get_object("lbltreesearch6").show()
         tvc.set_reorderable(True)
@@ -341,7 +344,7 @@ class oxcWindow(oxcWindowVM, oxcWindowHost, oxcWindowProperties,
         pbtcell = PixbufTextCellRenderer()
         pbtcell.set_property('xpad', 15)
         pbtcell.set_property('ypad', 13)
-        tvc = gtk.TreeViewColumn('Used memory', pbtcell, text=5, pixbuf=4, background=10)
+        tvc = Gtk.TreeViewColumn('Used memory', pbtcell, text=5, pixbuf=4, background=10)
         tvc.set_widget(self.builder.get_object("lbltreesearch7"))
         tvc.set_reorderable(True)
         tvc.set_sort_column_id(5)
@@ -350,13 +353,13 @@ class oxcWindow(oxcWindowVM, oxcWindowHost, oxcWindowProperties,
         # ComboBox created from GLADE needs a cellrenderertext 
         # and an attribute defining the column to show
         combobox = self.builder.get_object("radiobutton2_data")
-        cell = gtk.CellRendererText()
+        cell = Gtk.CellRendererText()
         combobox.pack_start(cell, True)
         combobox.add_attribute(cell, 'text', 0)  
         combobox.set_model(self.listphydvd)
 
         combobox = self.builder.get_object("radiobutton3_data")
-        cell = gtk.CellRendererText()
+        cell = Gtk.CellRendererText()
         combobox.pack_start(cell, True)
         combobox.add_attribute(cell, 'text', 0)  
         combobox.add_attribute(cell, 'rise', 2)  
@@ -364,27 +367,27 @@ class oxcWindow(oxcWindowVM, oxcWindowHost, oxcWindowProperties,
         combobox.set_model(self.listisoimage)
 
         combobox = self.builder.get_object("treeeditnetwork")
-        cell = gtk.CellRendererText()
+        cell = Gtk.CellRendererText()
         combobox.pack_start(cell, True)
         combobox.add_attribute(cell, 'text', 1)  
         combobox.set_model(self.builder.get_object("listeditnetwork"))
 
         combobox = self.builder.get_object("treeaddnetwork")
-        cell = gtk.CellRendererText()
+        cell = Gtk.CellRendererText()
         combobox.pack_start(cell, True)
         combobox.add_attribute(cell, 'text', 1)  
         combobox.set_model(self.builder.get_object("listaddnetwork"))
         combobox.set_active(0)
 
         combobox = self.builder.get_object("combostgmode")
-        cell = gtk.CellRendererText()
+        cell = Gtk.CellRendererText()
         combobox.pack_start(cell, True)
         combobox.add_attribute(cell, 'text', 1)  
         combobox.set_model(self.builder.get_object("liststgmode"))
         combobox.set_active(0)
 
         combobox = self.builder.get_object("combostgposition")
-        cell = gtk.CellRendererText()
+        cell = Gtk.CellRendererText()
         combobox.pack_start(cell, True)
         combobox.add_attribute(cell, 'text', 0)  
         combobox.set_model(self.builder.get_object("liststgposition"))
@@ -392,7 +395,7 @@ class oxcWindow(oxcWindowVM, oxcWindowHost, oxcWindowProperties,
         combobox.set_style(style)
 
         combobox = self.builder.get_object("combomgmtnetworks")
-        cell = gtk.CellRendererText()
+        cell = Gtk.CellRendererText()
         combobox.pack_start(cell, True)
         combobox.add_attribute(cell, 'text', 1)  
         combobox.set_model(self.builder.get_object("listmgmtnetworks"))
@@ -400,7 +403,7 @@ class oxcWindow(oxcWindowVM, oxcWindowHost, oxcWindowProperties,
         combobox.set_style(style)
 
         combobox = self.builder.get_object("combopoolmaster")
-        cell = gtk.CellRendererText()
+        cell = Gtk.CellRendererText()
         combobox.pack_start(cell, True)
         combobox.add_attribute(cell, 'text', 1)  
         combobox.set_model(self.builder.get_object("listpoolmaster"))
@@ -408,7 +411,7 @@ class oxcWindow(oxcWindowVM, oxcWindowHost, oxcWindowProperties,
         combobox.set_style(style)
 
         combobox = self.builder.get_object("combotargetiqn")
-        cell = gtk.CellRendererText()
+        cell = Gtk.CellRendererText()
         combobox.pack_start(cell, True)
         combobox.add_attribute(cell, 'text', 1)  
         combobox.set_model(self.builder.get_object("listtargetiqn"))
@@ -416,7 +419,7 @@ class oxcWindow(oxcWindowVM, oxcWindowHost, oxcWindowProperties,
         combobox.set_style(style)
 
         combobox = self.builder.get_object("combotargetlun")
-        cell = gtk.CellRendererText()
+        cell = Gtk.CellRendererText()
         combobox.pack_start(cell, True)
         combobox.add_attribute(cell, 'text', 1)  
         combobox.set_model(self.builder.get_object("listtargetlun"))
@@ -424,7 +427,7 @@ class oxcWindow(oxcWindowVM, oxcWindowHost, oxcWindowProperties,
         combobox.set_style(style)
 
         combobox = self.builder.get_object("combonetworknic")
-        cell = gtk.CellRendererText()
+        cell = Gtk.CellRendererText()
         combobox.pack_start(cell, True)
         combobox.add_attribute(cell, 'text', 1)  
         combobox.set_model(self.builder.get_object("listnetworknic"))
@@ -432,7 +435,7 @@ class oxcWindow(oxcWindowVM, oxcWindowHost, oxcWindowProperties,
         combobox.set_style(style)
 
         combobox = self.builder.get_object("combocustomfields")
-        cell = gtk.CellRendererText()
+        cell = Gtk.CellRendererText()
         combobox.pack_start(cell, True)
         combobox.add_attribute(cell, 'text', 0)  
         combobox.set_model(self.builder.get_object("listcombocustomfields"))
@@ -442,15 +445,15 @@ class oxcWindow(oxcWindowVM, oxcWindowHost, oxcWindowProperties,
         #print combobox.get_internal_child()
         # If gtk version is 2.18.0 or higher then add "marks" to scale
         if hasattr(self.builder.get_object("scalepropvmprio"), "add_mark"):
-            self.builder.get_object("scalepropvmprio").add_mark(0, gtk.POS_BOTTOM, "\nLowest")
-            self.builder.get_object("scalepropvmprio").add_mark(1, gtk.POS_BOTTOM, "")
-            self.builder.get_object("scalepropvmprio").add_mark(2, gtk.POS_BOTTOM, "")
-            self.builder.get_object("scalepropvmprio").add_mark(3, gtk.POS_BOTTOM, "")
-            self.builder.get_object("scalepropvmprio").add_mark(4, gtk.POS_BOTTOM, "\nNormal")
-            self.builder.get_object("scalepropvmprio").add_mark(5, gtk.POS_BOTTOM, "")
-            self.builder.get_object("scalepropvmprio").add_mark(6, gtk.POS_BOTTOM, "")
-            self.builder.get_object("scalepropvmprio").add_mark(7, gtk.POS_BOTTOM, "")
-            self.builder.get_object("scalepropvmprio").add_mark(8, gtk.POS_BOTTOM, "\nHighest")
+            self.builder.get_object("scalepropvmprio").add_mark(0, Gtk.PositionType.BOTTOM, "\nLowest")
+            self.builder.get_object("scalepropvmprio").add_mark(1, Gtk.PositionType.BOTTOM, "")
+            self.builder.get_object("scalepropvmprio").add_mark(2, Gtk.PositionType.BOTTOM, "")
+            self.builder.get_object("scalepropvmprio").add_mark(3, Gtk.PositionType.BOTTOM, "")
+            self.builder.get_object("scalepropvmprio").add_mark(4, Gtk.PositionType.BOTTOM, "\nNormal")
+            self.builder.get_object("scalepropvmprio").add_mark(5, Gtk.PositionType.BOTTOM, "")
+            self.builder.get_object("scalepropvmprio").add_mark(6, Gtk.PositionType.BOTTOM, "")
+            self.builder.get_object("scalepropvmprio").add_mark(7, Gtk.PositionType.BOTTOM, "")
+            self.builder.get_object("scalepropvmprio").add_mark(8, Gtk.PositionType.BOTTOM, "\nHighest")
 
         # Manual function to set the default buttons on dialogs/window 
         # Default buttons could be pressed with enter without need do click
@@ -458,7 +461,7 @@ class oxcWindow(oxcWindowVM, oxcWindowHost, oxcWindowProperties,
 
         # Make the background of the tab box, and its container children white
         tabbox = self.builder.get_object("tabbox")
-        tabbox.modify_bg(gtk.STATE_NORMAL, gtk.gdk.Color('#FFFFFF'))
+        #tabbox.override_background_color(Gtk.StateType.NORMAL, Gdk.Color('#FFFFFF'))
 
         #for tab_box_child in tabbox.get_children():
         self.recursive_set_bg_color(tabbox)
@@ -488,10 +491,10 @@ class oxcWindow(oxcWindowVM, oxcWindowHost, oxcWindowProperties,
     def recursive_set_bg_color(self, widget):
         for child in widget.get_children():
             # Is a storage container, dive into it
-            if isinstance(child, gtk.Container):
+            if isinstance(child, Gtk.Container):
                 self.recursive_set_bg_color(child)
                 # Is a specific type of widget
-                child.modify_bg(gtk.STATE_NORMAL, gtk.gdk.Color('#FFFFFF'))
+                #child.modify_bg(Gtk.StateType.NORMAL, Gdk.Color('#FFFFFF'))
 
     # Add a common theme to the section header areas
     def prettify_section_header(self, widget_name):
@@ -504,22 +507,22 @@ class oxcWindow(oxcWindowVM, oxcWindowHost, oxcWindowProperties,
 
         # Make the event boxes window visible and set the background color
         section_header.set_visible_window(True)
-        section_header.modify_bg(gtk.STATE_NORMAL, gtk.gdk.Color('#3498db'))
+        #section_header.modify_bg(Gtk.StateType.NORMAL, Gdk.Color('#3498db'))
 
         child_list = section_header.get_children()
         if child_list is not None:
             for child in child_list:
                 if child is not None:
-                    if type(child) == gtk.Label:
-                        child.modify_fg(gtk.STATE_NORMAL, gtk.gdk.Color('#FFFFFF'))
+                    if type(child) == Gtk.Label:
+                        #child.modify_fg(Gtk.StateType.NORMAL, Gdk.Color('#FFFFFF'))
 
                         # Preserve attributes set within Glade.
                         child_attributes = child.get_attributes()
                         if child_attributes is None:
-                            child_attributes = pango.AttrList()
+                            child_attributes = Pango.AttrList()
 
                         # Add/modify a few attributes
-                        child_attributes.change(pango.AttrScale(pango.SCALE_XX_LARGE, 0, -1))
+                        #child_attributes.change(Pango.AttrScale(Pango.SCALE_XX_LARGE, 0, -1))
                         child.set_attributes(child_attributes)
         return True
     
@@ -570,9 +573,9 @@ class oxcWindow(oxcWindowVM, oxcWindowHost, oxcWindowProperties,
         # For each dialog
         for wid in dialogs:
             # Set the flag indicating the widget could be a default button
-            self.builder.get_object(dialogs[wid]).set_flags(gtk.CAN_DEFAULT)
+            self.builder.get_object(dialogs[wid]).set_can_default(True)
             # If widget is a dialog
-            if type(self.builder.get_object(wid)) == type(gtk.Dialog()):
+            if type(self.builder.get_object(wid)) == type(Gtk.Dialog()):
                 # Set the button with "id response = 1" as default
                 self.builder.get_object(wid).set_default_response(1)
             else:
@@ -806,11 +809,11 @@ class oxcWindow(oxcWindowVM, oxcWindowHost, oxcWindowProperties,
                 [applicable, ip, url, tabname] = self.process_xml(data, host, ref)
                 if applicable:
                     view = webkit.WebView()
-                    browser = gtk.ScrolledWindow()
+                    browser = Gtk.ScrolledWindow()
                     url = url.replace("{$ip_address}", ip)
                     view.open(url)
                     browser.add_with_viewport(view)
-                    tablabel = gtk.Label(tabname)
+                    tablabel = Gtk.Label(label=tabname)
                     self.delete_pages.append(self.builder.get_object("tabbox").append_page(browser, tablabel))
                     browser.show_all()
         except ImportError or RuntimeError:
@@ -981,7 +984,7 @@ class oxcWindow(oxcWindowVM, oxcWindowHost, oxcWindowProperties,
         # Save unsaved changes
         self.config.write()
         # Exit!
-        gtk.main_quit()
+        Gtk.main_quit()
         if self.vnc_process:
             for process in self.vnc_process.keys():
                 #Kill all running sub_processes
@@ -1018,7 +1021,7 @@ class oxcWindow(oxcWindowVM, oxcWindowHost, oxcWindowProperties,
         if host:
             # Get the Tab name
             #tab_label = widget.get_tab_label(widget.get_nth_page(data2)).name
-            tab_label = gtk.Buildable.get_name(widget.get_tab_label(widget.get_nth_page(data2)))
+            tab_label = Gtk.Buildable.get_name(widget.get_tab_label(widget.get_nth_page(data2)))
             # Set as selected
             self.selected_tab = tab_label
             if tab_label != "VM_Console":
@@ -1093,7 +1096,7 @@ class oxcWindow(oxcWindowVM, oxcWindowHost, oxcWindowProperties,
                             if sys.platform != "win32" and sys.platform != "darwin":
                                 if self.vnc and self.selected_ref in self.vnc.keys(): self.vnc[self.selected_ref]
                                 # Create a gtkvnc object
-                                self.vnc[self.selected_ref] = gtkvnc.Display()
+                                self.vnc[self.selected_ref] = GtkVnc.Display()
                                 # Add to gtkvnc to a console area
                                 console_area = self.builder.get_object("console_area")
                                 if hasattr(self, "current_vnc"):
@@ -1312,7 +1315,7 @@ class oxcWindow(oxcWindowVM, oxcWindowHost, oxcWindowProperties,
                     # liststg contains the vdi under storage
                     liststg = self.builder.get_object("liststg")
                     liststg.set_sort_func(1, self.compare_data)
-                    liststg.set_sort_column_id(1, gtk.SORT_ASCENDING)
+                    liststg.set_sort_column_id(1, Gtk.SortType.ASCENDING)
                     # Fill the list of storage
                     if host:
                         self.xc_servers[host].fill_local_storage(self.selected_ref, liststg)
@@ -1481,7 +1484,7 @@ class oxcWindow(oxcWindowVM, oxcWindowHost, oxcWindowProperties,
             pthinfo = [self.modelfilter.get_path(self.treeview.get_selection().get_selected()[1]), None, 0, 0]
         else:
             pthinfo = widget.get_path_at_pos(x, y)
-        if event.type == gtk.gdk._2BUTTON_PRESS: 
+        if event.type == Gdk.EventType._2BUTTON_PRESS: 
             # On double click, if server is disconnected then connect to it
             if self.selected_state == "Disconnected":
                 self.on_m_connect_activate(widget, None)
@@ -1573,16 +1576,16 @@ class oxcWindow(oxcWindowVM, oxcWindowHost, oxcWindowProperties,
                     if self.selected_type == "storage":
                         typestg = self.xc_servers[self.selected_host].all['SR'][self.selected_ref]["type"]
                         pbdstg = len(self.xc_servers[self.selected_host].all['SR'][self.selected_ref]["PBDs"])
-                    if gtk.Buildable.get_name(child)[0:2] == "m_":
+                    if Gtk.Buildable.get_name(child)[0:2] == "m_":
                         if not self.selected_actions or \
-                                self.selected_actions.count(gtk.Buildable.get_name(child)[2:]) == 0:
+                                self.selected_actions.count(Gtk.Buildable.get_name(child)[2:]) == 0:
                             child.hide()
                         else:
                             # If selected_type is storage and typestg is not "lvm" or "udev"
                             if typestg != "lvm" and typestg != "udev":
                                 # If has not pbds.. then enable only "Reattach" and "Forget"
-                                if pbdstg == 0 and (gtk.Buildable.get_name(child) == "m_plug" or
-                                                    gtk.Buildable.get_name(child) == "m_forget"):
+                                if pbdstg == 0 and (Gtk.Buildable.get_name(child) == "m_plug" or
+                                                    Gtk.Buildable.get_name(child) == "m_forget"):
                                     child.show()
                                 else:
                                     # Disable else
@@ -1590,14 +1593,14 @@ class oxcWindow(oxcWindowVM, oxcWindowHost, oxcWindowProperties,
                                         child.hide()
                                     else:
                                         # If has pbds.. disable "Reattach"
-                                        if gtk.Buildable.get_name(child) != "m_plug":
+                                        if Gtk.Buildable.get_name(child) != "m_plug":
                                             child.show()
                                         else:
                                             child.hide()
                             else:
                                 child.hide()
                     # Properties will be showed always else on home and disconnected servers
-                    if gtk.Buildable.get_name(child) == "properties":
+                    if Gtk.Buildable.get_name(child) == "properties":
                         if self.selected_type == "home":
                             child.hide()
                         elif self.selected_type == "server" and not self.selected_ref:
@@ -1605,13 +1608,13 @@ class oxcWindow(oxcWindowVM, oxcWindowHost, oxcWindowProperties,
                         else:
                             child.show()
                     # Delete will be showed only on pool
-                    elif gtk.Buildable.get_name(child) == "delete":
+                    elif Gtk.Buildable.get_name(child) == "delete":
                         if self.selected_type == "pool":
                             child.show()
                         else:
                             child.hide()
                     # Install XenServer Tools only on 
-                    elif gtk.Buildable.get_name(child) == "installxenservertools":
+                    elif Gtk.Buildable.get_name(child) == "installxenservertools":
                         if self.selected_type == "vm" and self.selected_state == "Running":
                             self.builder.get_object("separator1").show()
                             self.builder.get_object("separator2").show()
@@ -1621,7 +1624,7 @@ class oxcWindow(oxcWindowVM, oxcWindowHost, oxcWindowProperties,
                             self.builder.get_object("separator2").hide()
                             child.hide()
                     # Repair storage, only on broken storage
-                    elif gtk.Buildable.get_name(child) == "m_repair_storage":
+                    elif Gtk.Buildable.get_name(child) == "m_repair_storage":
                         if self.selected_type == "storage":
                             broken = self.xc_servers[self.selected_host].is_storage_broken(self.selected_ref)
                             if broken:
@@ -1629,7 +1632,7 @@ class oxcWindow(oxcWindowVM, oxcWindowHost, oxcWindowProperties,
                             else:
                                 child.hide()
                     # Add to pool, only for servers without pools
-                    elif gtk.Buildable.get_name(child) == "m_add_to_pool":
+                    elif Gtk.Buildable.get_name(child) == "m_add_to_pool":
                         if self.selected_type == "host":
                             pool_ref = self.xc_servers[self.selected_host].all['pool'].keys()[0]
                             if self.xc_servers[self.selected_host].all['pool'][pool_ref]["name_label"] == "":
@@ -1639,7 +1642,7 @@ class oxcWindow(oxcWindowVM, oxcWindowHost, oxcWindowProperties,
                         else:
                             child.hide()
                     # Add server to pool from pool menu
-                    elif gtk.Buildable.get_name(child) == "m_pool_add_server":
+                    elif Gtk.Buildable.get_name(child) == "m_pool_add_server":
                         if self.selected_type == "pool":
                             child.show()
                         else:
@@ -1692,7 +1695,7 @@ class oxcWindow(oxcWindowVM, oxcWindowHost, oxcWindowProperties,
         an error occurs.
         error_string - The error string that will be displayed
         on the dialog.
-        http://www.pygtk.org/articles/extending-our-pygtk-application/extending-our-pygtk-application.htm
+        http://www.pyGtk.org/articles/extending-our-pygtk-application/extending-our-pygtk-application.htm
         """
         self.builder.get_object("walert").set_title(error_title)
         self.builder.get_object("walerttext").set_text(error_string)
@@ -1705,14 +1708,14 @@ class oxcWindow(oxcWindowVM, oxcWindowHost, oxcWindowProperties,
         """
         Function to set in statusbar an alert
         """
-        self.statusbar.get_children()[0].get_children()[0].modify_fg(gtk.STATE_NORMAL, gtk.gdk.color_parse('#000000'))
+        self.statusbar.get_children()[0].get_children()[0].modify_fg(Gtk.StateType.NORMAL, Gdk.color_parse('#000000'))
         self.statusbar.push(1, alert)
 
     def push_error_alert(self, alert):
         """
         Function to set in statusbar an error alert
         """
-        self.statusbar.get_children()[0].get_children()[0].modify_fg(gtk.STATE_NORMAL, gtk.gdk.color_parse('#FF0000'))
+        self.statusbar.get_children()[0].get_children()[0].modify_fg(Gtk.StateType.NORMAL, Gdk.color_parse('#FF0000'))
         self.statusbar.push(1, alert)
 
     def not_implemented_yet(self, widget, data=None):

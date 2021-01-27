@@ -1,3 +1,25 @@
+# -----------------------------------------------------------------------
+# aoxmi
+#
+# Copyright (C) 2021 mpserafim <mpserafim@mps.eti.br>
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,
+# USA.
+#
+# -----------------------------------------------------------------------
+
 from setuptools import setup
 import sys
 import os
@@ -54,11 +76,11 @@ except ImportError:
     raise RuntimeError('Cannot import py2exe')
 
 try:
-    import gtk
+    from gi.repository import Gtk
 except ImportError:
     raise ImportError('Cannot import gtk module')
 
-GTK_RUNTIME_DIR = os.path.join(os.path.split(os.path.dirname(gtk.__file__))[0], 'runtime')
+GTK_RUNTIME_DIR = os.path.join(os.path.split(os.path.dirname(Gtk.__file__))[0], 'runtime')
 assert os.path.exists(GTK_RUNTIME_DIR), 'Cannot find GTK Runtime Data'
 
 GTK_THEME_DEFAULT = os.path.join('share', 'themes', 'Default')
@@ -70,7 +92,7 @@ GTK_WIMP_DLL = 'libwimp.dll'
 GTK_ICONS = os.path.join("share", "icons")
 
 data_files = [('', glob('src\OXM\oxc.glade')),
-              ('', glob('src\OXM\oxc.conf')),
+              ('', glob('src\OXM\aoxmi.conf')),
               ('images', glob(r'src\OXM\images\*')),
               ('images_map', glob(r'src\OXM\images_map\*')),
               ('', glob('vncviewer.exe')),  # TODO: Don't ship vncviewer with oxm... install it, and use that!

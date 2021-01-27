@@ -1,8 +1,7 @@
 # -----------------------------------------------------------------------
-# OpenXenManager
+# aoxmi
 #
-# Copyright (C) 2009 Alberto Gonzalez Rodriguez alberto@pesadilla.org
-# Copyright (C) 2014 Daniel Lintott <daniel@serverb.co.uk>
+# Copyright (C) 2021 mpserafim <mpserafim@mps.eti.br>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -16,12 +15,13 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,
+# USA.
 #
 # -----------------------------------------------------------------------
 from xva import Xva
 from threading import Thread
-import gtk
+from gi.repository import Gtk
 
 
 class ProgressBarOXC:
@@ -39,8 +39,8 @@ class ProgressBarOXC:
     def update_text(self, text= None):
         self.widget.set_text(text)
     def finish(self):
-        image = gtk.Image()
-        image.set_from_stock(gtk.STOCK_CLOSE, gtk.ICON_SIZE_MENU) 
+        image = Gtk.Image()
+        image.set_from_stock(Gtk.STOCK_CLOSE, Gtk.IconSize.MENU) 
         self.widget2.set_image(image)
         self.widget2.set_label("Close")
 

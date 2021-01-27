@@ -1,8 +1,7 @@
 # -----------------------------------------------------------------------
-# OpenXenManager
+# aoxmi
 #
-# Copyright (C) 2009 Alberto Gonzalez Rodriguez alberto@pesadilla.org
-# Copyright (C) 2014 Daniel Lintott <daniel@serverb.co.uk>
+# Copyright (C) 2021 mpserafim <mpserafim@mps.eti.br>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -16,14 +15,15 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,
+# USA.
 #
 # -----------------------------------------------------------------------
 from window_vm_network import *
 from window_vm_storage import *
 from window_vm_snapshot import *
 from window_vm_performance import *
-import gtk
+from gi.repository import Gtk
 import time
 import os
 import utils
@@ -113,7 +113,7 @@ class oxcWindowVM(oxcWindowVMNetwork,oxcWindowVMStorage,oxcWindowVMSnapshot,oxcW
         """
         Function called when you press "Copy selected text" on console tab
         """
-        clipboard = self.vnc[self.selected_ref].get_clipboard(gtk.gdk.SELECTION_CLIPBOARD)
+        clipboard = self.vnc[self.selected_ref].get_clipboard(Gdk.SELECTION_CLIPBOARD)
         clipboard.connect("owner-change", self.vnc_button_release)
         text = clipboard.wait_for_text()
         targets = [('TEXT', 0, 1), ('STRING', 0, 2), ('COMPOUND_TEXT', 0, 3), ('UTF8_STRING', 0, 4)]
@@ -133,7 +133,7 @@ class oxcWindowVM(oxcWindowVMNetwork,oxcWindowVMStorage,oxcWindowVMSnapshot,oxcW
             self.noclosevnc = True
             self.builder.get_object("console_area").remove(self.vnc[self.selected_ref])
             glade_dir = os.path.join(utils.module_path(), 'ui')
-            self.vnc_builders[self.selected_ref] = gtk.Builder()
+            self.vnc_builders[self.selected_ref] = Gtk.Builder()
             self.vnc_builders[self.selected_ref].add_from_file(os.path.join(glade_dir,"window_vnc.glade"))
             self.vnc_builders[self.selected_ref].get_object("console_area3").add(self.vnc[self.selected_ref])
             self.vnc_builders[self.selected_ref].get_object("btredockconsole").connect("clicked", self.on_btredockconsole_clicked,self.selected_ref)
@@ -266,11 +266,11 @@ class oxcWindowVM(oxcWindowVMNetwork,oxcWindowVMStorage,oxcWindowVMSnapshot,oxcW
         Function called when you change the page in "import vm" process
         """
         # Set colors..
-        white = gtk.gdk.color_parse("white")
-        blue = gtk.gdk.color_parse("#d5e5f7")
+        white = Gdk.color_parse("white")
+        blue = Gdk.color_parse("#d5e5f7")
         for i in range(0,5):
-             self.builder.get_object("eventimport" + str(i)).modify_bg(gtk.STATE_NORMAL, white)
-        self.builder.get_object("eventimport" + str(data2)).modify_bg(gtk.STATE_NORMAL, blue)
+             self.builder.get_object("eventimport" + str(i)).modify_bg(Gtk.StateType.NORMAL, white)
+        self.builder.get_object("eventimport" + str(data2)).modify_bg(Gtk.StateType.NORMAL, blue)
         # If page is the first, you cannot go to previous page
         self.builder.get_object("previousvmimport").set_sensitive(data2 != 0)
     def on_nextvmimport_clicked(self, widget, data=None):
@@ -378,7 +378,7 @@ class oxcWindowVM(oxcWindowVMNetwork,oxcWindowVMStorage,oxcWindowVMSnapshot,oxcW
         }
 
         selection = self.builder.get_object("treeimportnetworks").get_selection()
-        selection.set_mode(gtk.SELECTION_MULTIPLE)
+        selection.set_mode(Gtk.SelectionMode.MULTIPLE)
         selection.select_all()
         model, selected = selection.get_selected_rows()
         iters = [model.get_iter(path) for path in selected]
@@ -394,7 +394,7 @@ class oxcWindowVM(oxcWindowVMNetwork,oxcWindowVMStorage,oxcWindowVMSnapshot,oxcW
         self.xc_servers[host].import_start = self.builder.get_object("checkstartvmafterimport").get_active()
         self.xc_servers[host].import_make_into_template = self.builder.get_object("radioexportedtpl").get_active()
         # Hide the window
-        selection.set_mode(gtk.SELECTION_SINGLE)
+        selection.set_mode(Gtk.SelectionMode.SINGLE)
         self.builder.get_object("vmimport").hide()
  
     def on_networkcolumn1_changed(self, widget, data=None, data2=None):
@@ -415,7 +415,7 @@ class oxcWindowVM(oxcWindowVMNetwork,oxcWindowVMStorage,oxcWindowVMSnapshot,oxcW
         Function called when you toggle "fast clone" or "full clone"
         """
         if widget.get_active():
-            if gtk.Buildable.get_name(widget) == "radiofastclone":
+            if Gtk.Buildable.get_name(widget) == "radiofastclone":
                 self.builder.get_object("treecopystg").set_sensitive(False)
             else:
                 self.builder.get_object("treecopystg").set_sensitive(True)

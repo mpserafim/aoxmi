@@ -1,8 +1,7 @@
 # -----------------------------------------------------------------------
-# OpenXenManager
+# aoxmi
 #
-# Copyright (C) 2009 Alberto Gonzalez Rodriguez alberto@pesadilla.org
-# Copyright (C) 2014 Daniel Lintott <daniel@serverb.co.uk>
+# Copyright (C) 2021 mpserafim <mpserafim@mps.eti.br>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -16,10 +15,11 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,
+# USA.
 #
 # -----------------------------------------------------------------------
-import gtk
+from gi.repository import Gtk
 from threading import Thread
 
 
@@ -48,13 +48,13 @@ class oxcWindowVMPerformance:
             self.builder.get_object("labeldiskusage").show()
             Thread(target=self.xc_servers[host].update_performance,
                    args=(self.selected_uuid, ref, self.selected_ip, False,
-                         times[gtk.Buildable.get_name(widget)])).start()
+                         times[Gtk.Buildable.get_name(widget)])).start()
         else:
             self.builder.get_object("scrwin_diskusage").hide()
             self.builder.get_object("labeldiskusage").hide()
             Thread(target=self.xc_servers[host].update_performance,
                    args=(self.selected_uuid, ref, self.selected_ip, True,
-                         times[gtk.Buildable.get_name(widget)])).start()
+                         times[Gtk.Buildable.get_name(widget)])).start()
 
     def on_viewportperf_button_press_event(self, widget, event):	
         """
@@ -63,7 +63,7 @@ class oxcWindowVMPerformance:
         self.vport = widget
         if event.button == 1:
             # Set cursor and set actual X/Y
-            widget.window.set_cursor(gtk.gdk.Cursor(gtk.gdk.FLEUR))
+            widget.window.set_cursor(Gdk.Cursor.new(Gdk.FLEUR))
             self.prevmousex = event.x_root
             self.prevmousey = event.y_root
 
@@ -83,9 +83,9 @@ class oxcWindowVMPerformance:
         if event.is_hint:
             x, y, state = event.window.get_pointer()
         else:
-            state = event.state
+            state = event.get_state()
         x, y = event.x_root, event.y_root
-        if state & gtk.gdk.BUTTON1_MASK:
+        if state & Gdk.ModifierType.BUTTON1_MASK:
             offset_x = self.prevmousex - x
             offset_y = self.prevmousey - y
             self.move_image(offset_x, offset_y)

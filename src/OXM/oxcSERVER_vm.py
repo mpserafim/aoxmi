@@ -1,8 +1,7 @@
 # -----------------------------------------------------------------------
-# OpenXenManager
+# aoxmi
 #
-# Copyright (C) 2009 Alberto Gonzalez Rodriguez alberto@pesadilla.org
-# Copyright (C) 2014 Daniel Lintott <daniel@serverb.co.uk>
+# Copyright (C) 2021 mpserafim <mpserafim@mps.eti.br>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -16,7 +15,8 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,
+# USA.
 #
 # -----------------------------------------------------------------------
 from threading import Thread
@@ -82,14 +82,14 @@ class oxcSERVERvm(oxcSERVERvmnetwork,oxcSERVERvmstorage,oxcSERVERvmsnapshot):
                             pass
                 else:
                     if self.default_sr == sr:
-                        list.append([gtk.gdk.pixbuf_new_from_file(path.join(utils.module_path(),
+                        list.append([GdkPixbuf.Pixbuf.new_from_file(path.join(utils.module_path(),
                                                                             "images/storage_default_16.png")), sr,
                                      storage['name_label'], self.convert_bytes(int(storage['physical_size']) -
                                                                                int(storage['virtual_allocation']))
                                      + " free of " + self.convert_bytes(storage['physical_size'])])
 
                     else:
-                        list.append([gtk.gdk.pixbuf_new_from_file(path.join(utils.module_path(),
+                        list.append([GdkPixbuf.Pixbuf.new_from_file(path.join(utils.module_path(),
                                                                             "images/storage_shaped_16.png")), sr,
                                      storage['name_label'], self.convert_bytes(int(storage['physical_size']) -
                                                                                int(storage['virtual_allocation']))

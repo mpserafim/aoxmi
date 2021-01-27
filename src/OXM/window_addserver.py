@@ -1,9 +1,7 @@
 # -----------------------------------------------------------------------
-# OpenXenManager
+# aoxmi
 #
-# Copyright (C) 2009 Alberto Gonzalez Rodriguez alberto@pesadilla.org
-# Copyright (C) 2011 Cheng Sun <chengsun9@gmail.com>
-# Copyright (C) 2014 Daniel Lintott <daniel@serverb.co.uk>
+# Copyright (C) 2021 mpserafim <mpserafim@mps.eti.br>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -23,13 +21,15 @@
 # -----------------------------------------------------------------------
 import xtea
 import re
+import gi
+from gi.repository import GdkPixbuf
 from oxcSERVER import *
 from os import path
 import utils
 
 
 def idle(func):
-    return lambda *args, **kwargs: gobject.idle_add(lambda: func(*args, **kwargs) and False)
+    return lambda *args, **kwargs: GObject.idle_add(lambda: func(*args, **kwargs) and False)
 
 
 class AddServer(object):
@@ -276,7 +276,7 @@ class AddServer(object):
                 if server.all['pool'][pool]['name_label']:
                     poolroot = self.treestore.append(
                         self.treeroot,
-                        [gtk.gdk.pixbuf_new_from_file(path.join(
+                        [GdkPixbuf.Pixbuf.new_from_file(path.join(
                             utils.module_path(),
                             "images/poolconnected_16.png")),
                          server.all['pool'][pool]['name_label'], pool, "pool",
@@ -301,7 +301,7 @@ class AddServer(object):
                     if host_enabled:
                         hostroot[h] = self.treestore.append(
                             poolroot,
-                            [gtk.gdk.pixbuf_new_from_file(
+                            [GdkPixbuf.Pixbuf.new_from_file(
                                 path.join(utils.module_path(),
                                     "images/tree_connected_16.png")),
                              host, host_uuid, "host", "Running", server.host,
@@ -311,7 +311,7 @@ class AddServer(object):
                     else:
                         hostroot[h] = self.treestore.append(
                             poolroot,
-                            [gtk.gdk.pixbuf_new_from_file(path.join(
+                            [GdkPixbuf.Pixbuf.new_from_file(path.join(
                                 utils.module_path(),
                                 "images/tree_disabled_16.png")),
                              host, host_uuid, "host", "Disconnected",
@@ -325,7 +325,7 @@ class AddServer(object):
                 if host_enabled:
                     hostroot[server.all['host'].keys()[0]] = self.treestore.append(
                         self.treeroot,
-                        [gtk.gdk.pixbuf_new_from_file(path.join(
+                        [GdkPixbuf.Pixbuf.new_from_file(path.join(
                             utils.module_path(),
                             "images/tree_connected_16.png")),
                          host, host_uuid, "host", "Running", server.host,
@@ -336,7 +336,7 @@ class AddServer(object):
                 else:
                     hostroot[server.all['host'].keys()[0]] = self.treestore.append(
                         self.treeroot,
-                        [gtk.gdk.pixbuf_new_from_file(path.join(
+                        [GdkPixbuf.Pixbuf.new_from_file(path.join(
                             utils.module_path(),
                             "images/tree_disabled_16.png")),
                          host, host_uuid, "host", "Running", server.host,
@@ -374,7 +374,7 @@ class AddServer(object):
                     if len(server.all['SR'][sr]['PBDs']) == 0:
                         server.last_storage_iter = self.treestore.append(
                             root,
-                            [gtk.gdk.pixbuf_new_from_file(path.join(
+                            [GdkPixbuf.Pixbuf.new_from_file(path.join(
                                 utils.module_path(),
                                 "images/storage_detached_16.png")),
                              server.all['SR'][sr]['name_label'],
@@ -388,7 +388,7 @@ class AddServer(object):
                             broken = True
                             server.last_storage_iter = self.treestore.append(
                                 root,
-                                [gtk.gdk.pixbuf_new_from_file(path.join(
+                                [GdkPixbuf.Pixbuf.new_from_file(path.join(
                                     utils.module_path(),
                                     "images/storage_broken_16.png")),
                                  server.all['SR'][sr]['name_label'],
@@ -400,14 +400,14 @@ class AddServer(object):
                         if server.all['SR'][sr]['shared']:
                             if sr == server.default_sr:
                                 server.last_storage_iter = self.treestore.append(
-                                    root, [gtk.gdk.pixbuf_new_from_file(path.join(utils.module_path(),
+                                    root, [GdkPixbuf.Pixbuf.new_from_file(path.join(utils.module_path(),
                                                                                   "images/storage_default_16.png")),
                                            server.all['SR'][sr]['name_label'], server.all['SR'][sr]['uuid'],
                                            "storage", None, server.host, sr,
                                            server.all['SR'][sr]['allowed_operations'], None])
                             else:
                                 server.last_storage_iter = self.treestore.append(
-                                    root, [gtk.gdk.pixbuf_new_from_file(path.join(utils.module_path(),
+                                    root, [GdkPixbuf.Pixbuf.new_from_file(path.join(utils.module_path(),
                                                                                   "images/storage_shaped_16.png")),
                                            server.all['SR'][sr]['name_label'], server.all['SR'][sr]['uuid'],
                                            "storage", None, server.host, sr,
@@ -419,14 +419,14 @@ class AddServer(object):
                                     if server.all['PBD'][pbd]['host'] in hostroot:
                                         server.last_storage_iter = self.treestore.append(
                                             hostroot[server.all['PBD'][pbd]['host']],
-                                            [gtk.gdk.pixbuf_new_from_file(path.join(utils.module_path(),
+                                            [GdkPixbuf.Pixbuf.new_from_file(path.join(utils.module_path(),
                                                                                     "images/storage_default_16.png")),
                                              server.all['SR'][sr]['name_label'], server.all['SR'][sr]['uuid'],
                                              "storage", None, server.host, sr,
                                              server.all['SR'][sr]['allowed_operations'], None])
                                     else:
                                         server.last_storage_iter = self.treestore.append(
-                                            root, [gtk.gdk.pixbuf_new_from_file(path.join(
+                                            root, [GdkPixbuf.Pixbuf.new_from_file(path.join(
                                                 utils.module_path(), "images/storage_shaped_16.png")),
                                                 server.all['SR'][sr]['name_label'], server.all['SR'][sr]['uuid'],
                                                 "storage", None, server.host, sr,
@@ -436,14 +436,14 @@ class AddServer(object):
                                     if server.all['PBD'][pbd]['host'] in hostroot:
                                         server.last_storage_iter = self.treestore.append(
                                             hostroot[server.all['PBD'][pbd]['host']],
-                                            [gtk.gdk.pixbuf_new_from_file(path.join(utils.module_path(),
+                                            [GdkPixbuf.Pixbuf.new_from_file(path.join(utils.module_path(),
                                                                                     "images/storage_shaped_16.png")),
                                              server.all['SR'][sr]['name_label'], server.all['SR'][sr]['uuid'],
                                              "storage", None, server.host, sr,
                                              server.all['SR'][sr]['allowed_operations'], None])
                                     else:
                                         server.last_storage_iter = self.treestore.append(
-                                            root, [gtk.gdk.pixbuf_new_from_file(path.join(
+                                            root, [GdkPixbuf.Pixbuf.new_from_file(path.join(
                                                 utils.module_path(), "images/storage_shaped_16.png")),
                                                 server.all['SR'][sr]['name_label'], server.all['SR'][sr]['uuid'],
                                                 "storage", None, server.host, sr,
@@ -452,7 +452,7 @@ class AddServer(object):
             for tpl in server.all_vms_keys:
                 if server.all['vms'][tpl]['is_a_template'] and not server.all['vms'][tpl]['is_a_snapshot']:
                     if server.all['vms'][tpl]['last_booted_record'] == "":
-                        self.treestore.append(root, [gtk.gdk.pixbuf_new_from_file(path.join(utils.module_path(),
+                        self.treestore.append(root, [GdkPixbuf.Pixbuf.new_from_file(path.join(utils.module_path(),
                                                                                             "images/template_16.png")),
                                                      server.all['vms'][tpl]['name_label'], server.all['vms'][tpl]['uuid'],
                                                      "template", None, server.host, tpl,
@@ -462,13 +462,13 @@ class AddServer(object):
 
                         if tpl_affinity in hostroot:
                             self.treestore.append(hostroot[tpl_affinity],
-                                                  [gtk.gdk.pixbuf_new_from_file(
+                                                  [GdkPixbuf.Pixbuf.new_from_file(
                                                       path.join(utils.module_path(), "images/user_template_16.png")),
                                                    server.all['vms'][tpl]['name_label'], server.all['vms'][tpl]['uuid'],
                                                    "custom_template", None, server.host, tpl,
                                                    server.all['vms'][tpl]['allowed_operations'], None])
                         else:
-                            self.treestore.append(root, [gtk.gdk.pixbuf_new_from_file(path.join(
+                            self.treestore.append(root, [GdkPixbuf.Pixbuf.new_from_file(path.join(
                                 utils.module_path(), "images/user_template_16.png")),
                                 server.all['vms'][tpl]['name_label'], server.all['vms'][tpl]['uuid'], "custom_template", None,
                                 server.host, tpl, server.all['vms'][tpl]['allowed_operations'], None])

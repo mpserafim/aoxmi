@@ -1,8 +1,7 @@
 # -----------------------------------------------------------------------
-# OpenXenManager
+# aoxmi
 #
-# Copyright (C) 2009 Alberto Gonzalez Rodriguez alberto@pesadilla.org
-# Copyright (C) 2014 Daniel Lintott <daniel@serverb.co.uk>
+# Copyright (C) 2021 mpserafim <mpserafim@mps.eti.br>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -16,10 +15,11 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,
+# USA.
 #
 # -----------------------------------------------------------------------
-import gtk
+from gi.repository import Gtk
 from threading import Thread
 from window_host_nics import *
 from window_host_network import * 
@@ -84,7 +84,7 @@ class oxcWindowHost(oxcWindowHostNics, oxcWindowHostNetwork):
         Accept dialog file export map to png
         """
         filename = self.builder.get_object("fileexportmap").get_filename()
-        pixbuf = gtk.gdk.Pixbuf( gtk.gdk.COLORSPACE_RGB, False, 8, 640, 480)
+        pixbuf = GdkPixbuf.Pixbuf( GdkPixbuf.Colorspace.RGB, False, 8, 640, 480)
         pixmap = self.windowmap.widget.get_snapshot()
         pixbuf.get_from_drawable(pixmap, pixmap.get_colormap(), 0, 0, 0, 0, -1, -1)
         pixbuf.save(filename, 'png')
@@ -102,7 +102,7 @@ class oxcWindowHost(oxcWindowHostNics, oxcWindowHostNetwork):
         """
         if not "maps" in self.config:
              self.config["maps"] = {}
-        self.config["maps"][gtk.Buildable.get_name(widget)] = str(widget.get_active())
+        self.config["maps"][Gtk.Buildable.get_name(widget)] = str(widget.get_active())
         self.config.write()
         self.update_maps()
 

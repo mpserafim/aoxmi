@@ -1,36 +1,39 @@
 #!/usr/bin/env python
+# -----------------------------------------------------------------------
+# aoxmi
 #
-#       lineplot.py
+# Copyright (C) 2021 mpserafim <mpserafim@mps.eti.br>
 #
-#       Copyright 2008 Sven Festersen <sven@sven-festersen.de>
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
 #
-#       This program is free software; you can redistribute it and/or modify
-#       it under the terms of the GNU General Public License as published by
-#       the Free Software Foundation; either version 2 of the License, or
-#       (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
 #
-#       This program is distributed in the hope that it will be useful,
-#       but WITHOUT ANY WARRANTY; without even the implied warranty of
-#       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#       GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,
+# USA.
 #
-#       You should have received a copy of the GNU General Public License
-#       along with this program; if not, write to the Free Software
-#       Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
-#       MA 02110-1301, USA.
+# -----------------------------------------------------------------------
+#
+# Based on work of Sven Festersen <sven@sven-festersen.de>
+#
 """
 Contains the LineChart widget.
-
-Author: Sven Festersen (sven@sven-festersen.de)
 """
 __docformat__ = "epytext"
-import gobject
+from gi.repository import GObject
 import cairo
-import gtk
+from gi.repository import Gtk
 import math
 import os
 
-import pygtk_chart
+import gi_chart
 from pygtk_chart.basics import *
 from pygtk_chart.chart_object import ChartObject
 from pygtk_chart import chart
@@ -311,14 +314,14 @@ class LineChart(chart.Chart):
     def callback(linechart, graph, (x, y))
     """
     
-    __gsignals__ = {"datapoint-clicked": (gobject.SIGNAL_RUN_LAST,
-                                            gobject.TYPE_NONE,
-                                            (gobject.TYPE_PYOBJECT,
-                                            gobject.TYPE_PYOBJECT)),
-                    "datapoint-hovered": (gobject.SIGNAL_RUN_LAST,
-                                            gobject.TYPE_NONE,
-                                            (gobject.TYPE_PYOBJECT,
-                                            gobject.TYPE_PYOBJECT))}
+    __gsignals__ = {"datapoint-clicked": (GObject.SignalFlags.RUN_LAST,
+                                            None,
+                                            (GObject.TYPE_PYOBJECT,
+                                            GObject.TYPE_PYOBJECT)),
+                    "datapoint-hovered": (GObject.SignalFlags.RUN_LAST,
+                                            None,
+                                            (GObject.TYPE_PYOBJECT,
+                                            GObject.TYPE_PYOBJECT))}
     
     def __init__(self):
         chart.Chart.__init__(self)
@@ -357,7 +360,7 @@ class LineChart(chart.Chart):
 
         @type context: cairo.Context
         @param context: The context to draw on.
-        @type rect: gtk.gdk.Rectangle
+        @type rect: 
         @param rect: A rectangle representing the charts area.
         """
         for (name, graph) in self.graphs.iteritems():
@@ -370,7 +373,7 @@ class LineChart(chart.Chart):
 
         @type context: cairo.Context
         @param context: The context to draw on.
-        @type rect: gtk.gdk.Rectangle
+        @type rect: 
         @param rect: A rectangle representing the charts area.
         """
         self.xaxis.draw(context, rect, self.yaxis)
@@ -401,7 +404,7 @@ class LineChart(chart.Chart):
         self._range_calc.prepare_tics(graph_rect, self.xaxis, self.yaxis)
         #initial context settings: line width & font
         context.set_line_width(1)
-        font = gtk.Label().style.font_desc.get_family()
+        font = Gtk.Label().style.font_desc.get_family()
         context.select_font_face(font,cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_NORMAL)
 
         # self.draw_basics(context, rect)
@@ -501,31 +504,31 @@ class Axis(ChartObject):
     The Axis class inherits signals from chart_object.ChartObject.
     """
 
-    __gproperties__ = {"label": (gobject.TYPE_STRING, "axis label",
+    __gproperties__ = {"label": (GObject.TYPE_STRING, "axis label",
                                     "The label of the axis.", "",
-                                    gobject.PARAM_READWRITE),
-                        "show-label": (gobject.TYPE_BOOLEAN, "show label",
+                                    GObject.PARAM_READWRITE),
+                        "show-label": (GObject.TYPE_BOOLEAN, "show label",
                                     "Set whether to show the axis label.",
-                                    True, gobject.PARAM_READWRITE),
-                        "position": (gobject.TYPE_INT, "axis position",
+                                    True, GObject.PARAM_READWRITE),
+                        "position": (GObject.TYPE_INT, "axis position",
                                     "Position of the axis.", 5, 7, 5,
-                                    gobject.PARAM_READWRITE),
-                        "show-tics": (gobject.TYPE_BOOLEAN, "show tics",
+                                    GObject.PARAM_READWRITE),
+                        "show-tics": (GObject.TYPE_BOOLEAN, "show tics",
                                     "Set whether to draw tics.", True,
-                                    gobject.PARAM_READWRITE),
-                        "show-tic-labels": (gobject.TYPE_BOOLEAN,
+                                    GObject.PARAM_READWRITE),
+                        "show-tic-labels": (GObject.TYPE_BOOLEAN,
                                             "show tic labels",
                                             "Set whether to draw tic labels",
                                             True,
-                                            gobject.PARAM_READWRITE),
-                        "tic-format-function": (gobject.TYPE_PYOBJECT,
+                                            GObject.PARAM_READWRITE),
+                        "tic-format-function": (GObject.TYPE_PYOBJECT,
                                             "tic format function",
                                             "This function is used to label the tics.",
-                                            gobject.PARAM_READWRITE),
-                        "logarithmic": (gobject.TYPE_BOOLEAN,
+                                            GObject.PARAM_READWRITE),
+                        "logarithmic": (GObject.TYPE_BOOLEAN,
                                         "logarithmic scale",
                                         "Set whether to use logarithmic scale.",
-                                        False, gobject.PARAM_READWRITE)}
+                                        False, GObject.PARAM_READWRITE)}
 
     def __init__(self, range_calc, label):
         ChartObject.__init__(self)
@@ -894,7 +897,7 @@ class Grid(ChartObject):
        type: boolean)
      - show-vertical (sets whther to show vertical grid lines,
        type: boolean)
-     - color (the color of the grid lines, type: gtk.gdk.Color)
+     - color (the color of the grid lines, type: Gdk.Color)
      - line-style-horizontal (the line style of the horizontal grid
        lines, type: a line style constant)
      - line-style-vertical (the line style of the vertical grid lines,
@@ -905,32 +908,32 @@ class Grid(ChartObject):
     The Grid class inherits signals from chart_object.ChartObject.
     """
 
-    __gproperties__ = {"show-horizontal": (gobject.TYPE_BOOLEAN,
+    __gproperties__ = {"show-horizontal": (GObject.TYPE_BOOLEAN,
                                     "show horizontal lines",
                                     "Set whether to draw horizontal lines.",
-                                    True, gobject.PARAM_READWRITE),
-                        "show-vertical": (gobject.TYPE_BOOLEAN,
+                                    True, GObject.PARAM_READWRITE),
+                        "show-vertical": (GObject.TYPE_BOOLEAN,
                                     "show vertical lines",
                                     "Set whether to draw vertical lines.",
-                                    True, gobject.PARAM_READWRITE),
-                        "color": (gobject.TYPE_PYOBJECT,
+                                    True, GObject.PARAM_READWRITE),
+                        "color": (GObject.TYPE_PYOBJECT,
                                     "grid color",
                                     "The color of the grid in (r,g,b) format. r,g,b in [0,1]",
-                                    gobject.PARAM_READWRITE),
-                        "line-style-horizontal": (gobject.TYPE_INT,
+                                    GObject.PARAM_READWRITE),
+                        "line-style-horizontal": (GObject.TYPE_INT,
                                                 "horizontal line style",
                                                 "Line Style for the horizontal grid lines",
-                                                0, 3, 0, gobject.PARAM_READWRITE),
-                        "line-style-vertical": (gobject.TYPE_INT,
+                                                0, 3, 0, GObject.PARAM_READWRITE),
+                        "line-style-vertical": (GObject.TYPE_INT,
                                                 "vertical line style",
                                                 "Line Style for the vertical grid lines",
-                                                0, 3, 0, gobject.PARAM_READWRITE)}
+                                                0, 3, 0, GObject.PARAM_READWRITE)}
 
     def __init__(self, range_calc):
         ChartObject.__init__(self)
         self.set_property("antialias", False)
         self._range_calc = range_calc
-        self._color = gtk.gdk.color_parse("#DEDEDE")
+        self._color = Gdk.color_parse("#DEDEDE")
         self._show_h = True
         self._show_v = True
         self._line_style_h = pygtk_chart.LINE_STYLE_SOLID
@@ -1036,7 +1039,7 @@ class Grid(ChartObject):
         """
         Set the color of the grid.
 
-        @type color: gtk.gdk.Color
+        @type color: Gdk.Color
         @param color: The new color of the grid.
         """
         self.set_property("color", color)
@@ -1046,7 +1049,7 @@ class Grid(ChartObject):
         """
         Returns the color of the grid.
 
-        @return: gtk.gdk.Color.
+        @return: Gdk.Color.
         """
         return self.get_property("color")
         
@@ -1108,13 +1111,13 @@ class Graph(ChartObject):
     Additional properties:
      - name (a unique id for the graph, type: string, read only)
      - title (the graph's title, type: string)
-     - color (the graph's color, type: gtk.gdk.Color)
+     - color (the graph's color, type: Gdk.Color)
      - type (graph type, type: a graph type constant)
      - point-size (radius of the datapoints in px,
        type: int in [1, 100])
      - fill-to (set how to fill space under the graph, type: None,
        Graph or float)
-     - fill-color (the color of the filling, type: gtk.gdk.Color)
+     - fill-color (the color of the filling, type: Gdk.Color)
      - fill-opacity (the opacity of the filling, type: float in [0, 1])
      - show-values (sets whether y values should be shown at the
        datapoints, type: boolean)
@@ -1135,54 +1138,54 @@ class Graph(ChartObject):
     The Graph class inherits signals from chart_object.ChartObject.
     """
 
-    __gproperties__ = {"name": (gobject.TYPE_STRING, "graph id",
+    __gproperties__ = {"name": (GObject.TYPE_STRING, "graph id",
                                 "The graph's unique name.",
-                                "", gobject.PARAM_READABLE),
-                        "title": (gobject.TYPE_STRING, "graph title",
+                                "", GObject.PARAM_READABLE),
+                        "title": (GObject.TYPE_STRING, "graph title",
                                     "The title of the graph.", "",
-                                    gobject.PARAM_READWRITE),
-                        "color": (gobject.TYPE_PYOBJECT,
+                                    GObject.PARAM_READWRITE),
+                        "color": (GObject.TYPE_PYOBJECT,
                                     "graph color",
                                     "The color of the graph in (r,g,b) format. r,g,b in [0,1].",
-                                    gobject.PARAM_READWRITE),
-                        "type": (gobject.TYPE_INT, "graph type",
+                                    GObject.PARAM_READWRITE),
+                        "type": (GObject.TYPE_INT, "graph type",
                                     "The type of the graph.", 1, 3, 3,
-                                    gobject.PARAM_READWRITE),
-                        "point-size": (gobject.TYPE_INT, "point size",
+                                    GObject.PARAM_READWRITE),
+                        "point-size": (GObject.TYPE_INT, "point size",
                                         "Radius of the data points.", 1,
-                                        100, 2, gobject.PARAM_READWRITE),
-                        "fill-to": (gobject.TYPE_PYOBJECT, "fill to",
+                                        100, 2, GObject.PARAM_READWRITE),
+                        "fill-to": (GObject.TYPE_PYOBJECT, "fill to",
                                     "Set how to fill space under the graph.",
-                                    gobject.PARAM_READWRITE),
-                        "fill-color": (gobject.TYPE_PYOBJECT, "fill color",
+                                    GObject.PARAM_READWRITE),
+                        "fill-color": (GObject.TYPE_PYOBJECT, "fill color",
                                     "Set which color to use when filling space under the graph.",
-                                    gobject.PARAM_READWRITE),
-                        "fill-opacity": (gobject.TYPE_FLOAT, "fill opacity",
+                                    GObject.PARAM_READWRITE),
+                        "fill-opacity": (GObject.TYPE_FLOAT, "fill opacity",
                                     "Set which opacity to use when filling space under the graph.",
-                                    0.0, 1.0, 0.3, gobject.PARAM_READWRITE),
-                        "show-values": (gobject.TYPE_BOOLEAN, "show values",
+                                    0.0, 1.0, 0.3, GObject.PARAM_READWRITE),
+                        "show-values": (GObject.TYPE_BOOLEAN, "show values",
                                     "Sets whether to show the y values.",
-                                    False, gobject.PARAM_READWRITE),
-                        "show-title": (gobject.TYPE_BOOLEAN, "show title",
+                                    False, GObject.PARAM_READWRITE),
+                        "show-title": (GObject.TYPE_BOOLEAN, "show title",
                                     "Sets whether to show the graph's title.",
-                                    True, gobject.PARAM_READWRITE),
-                        "line-style": (gobject.TYPE_INT, "line style",
+                                    True, GObject.PARAM_READWRITE),
+                        "line-style": (GObject.TYPE_INT, "line style",
                                      "The line style to use.", 0, 3, 0,
-                                     gobject.PARAM_READWRITE),
-                        "point-style": (gobject.TYPE_PYOBJECT, "point style",
+                                     GObject.PARAM_READWRITE),
+                        "point-style": (GObject.TYPE_PYOBJECT, "point style",
                                         "The graph's point style.",
-                                        gobject.PARAM_READWRITE),
-                        "clickable": (gobject.TYPE_BOOLEAN, "clickable",
+                                        GObject.PARAM_READWRITE),
+                        "clickable": (GObject.TYPE_BOOLEAN, "clickable",
                                     "Sets whether datapoints should be clickable.",
-                                    True, gobject.PARAM_READWRITE),
-                        "show-xerrors": (gobject.TYPE_BOOLEAN,
+                                    True, GObject.PARAM_READWRITE),
+                        "show-xerrors": (GObject.TYPE_BOOLEAN,
                                             "show xerrors",
                                             "Set whether to show x-errorbars.",
-                                            True, gobject.PARAM_READWRITE),
-                        "show-yerrors": (gobject.TYPE_BOOLEAN,
+                                            True, GObject.PARAM_READWRITE),
+                        "show-yerrors": (GObject.TYPE_BOOLEAN,
                                             "show yerrors",
                                             "Set whether to show y-errorbars.",
-                                            True, gobject.PARAM_READWRITE)}
+                                            True, GObject.PARAM_READWRITE)}
 
     def __init__(self, name, title, data):
         """
@@ -1353,7 +1356,7 @@ class Graph(ChartObject):
                 draw_errors(context, rect, self._range_calc, x, y, self._errors, self._draw_xerrors, self._draw_yerrors, xaxis, yaxis, self._point_size)
                     
                 #draw the point
-                if type(self._point_style) != gtk.gdk.Pixbuf:
+                if type(self._point_style) != GdkPixbuf.Pixbuf:
                     draw_point(context, ax, ay, self._point_size, self._point_style)
                     highlighted = (x, y, self) in highlighted_points
                     if highlighted and self._clickable:
@@ -1423,7 +1426,7 @@ class Graph(ChartObject):
 
         @type context: cairo.Context
         @param context: The context to draw on.
-        @type rect: gtk.gdk.Rectangle
+        @type rect: 
         @param rect: A rectangle representing the charts area.
         @type last_point: pairs of numbers
         @param last_point: The absolute position of the last drawn data point.
@@ -1504,7 +1507,7 @@ class Graph(ChartObject):
 
         @type context: cairo.Context
         @param context: The context to draw on.
-        @type rect: gtk.gdk.Rectangle
+        @type rect: 
         @param rect: A rectangle representing the charts area.
         """
         (xrange, yrange) = self._range_calc.get_ranges(xaxis, yaxis)
@@ -1581,7 +1584,7 @@ class Graph(ChartObject):
         """
         Returns the current color of the graph or COLOR_AUTO.
 
-        @return: gtk.gdk.Color or COLOR_AUTO.
+        @return: Gdk.Color or COLOR_AUTO.
         """
         return self.get_property("color")
 
@@ -1590,7 +1593,7 @@ class Graph(ChartObject):
         Set the color of the graph.
         If set to COLOR_AUTO, the color will be choosen dynamicly.
 
-        @type color: gtk.gdk.Color
+        @type color: Gdk.Color
         @param color: The new color of the graph.
         """
         self.set_property("color", color)
@@ -1664,7 +1667,7 @@ class Graph(ChartObject):
         Returns the color that is used to fill space under the graph
         or COLOR_AUTO.
         
-        @return: gtk.gdk.Color or COLOR_AUTO.
+        @return: Gdk.Color or COLOR_AUTO.
         """
         return self.get_property("fill-color")
         
@@ -1674,7 +1677,7 @@ class Graph(ChartObject):
         graph.
         If color is COLOR_AUTO, the graph's color will be used.
         
-        @type color: gtk.gdk.Color or COLOR_AUTO.
+        @type color: Gdk.Color or COLOR_AUTO.
         """
         self.set_property("fill-color", color)
         self.emit("appearance_changed")
@@ -1790,10 +1793,10 @@ class Graph(ChartObject):
          - pygtk_chart.POINT_STYLE_TRIANGLE_UP
          - pygtk_chart.POINT_STYLE_TRIANGLE_DOWN
          - pygtk_chart.POINT_STYLE_DIAMOND
-        style can also be a gtk.gdk.Pixbuf that should be used as point.
+        style can also be a GdkPixbuf.Pixbuf that should be used as point.
         
         @param style: the new point style
-        @type style: one of the cosnatnts above or gtk.gdk.Pixbuf.
+        @type style: one of the cosnatnts above or GdkPixbuf.Pixbuf.
         """
         self.set_property("point-style", style)
         self.emit("appearance_changed")
@@ -1803,7 +1806,7 @@ class Graph(ChartObject):
         Returns the current point style. See L{set_point_style} for 
         details.
         
-        @return: a point style constant or gtk.gdk.Pixbuf.
+        @return: a point style constant or GdkPixbuf.Pixbuf.
         """
         return self.get_property("point-style")
         
@@ -2020,9 +2023,9 @@ class Legend(ChartObject):
     The Legend class inherits signals from chart_object.ChartObject.    
     """
     
-    __gproperties__ = {"position": (gobject.TYPE_INT, "legend position",
+    __gproperties__ = {"position": (GObject.TYPE_INT, "legend position",
                                     "Position of the legend.", 7, 11, 8,
-                                    gobject.PARAM_READWRITE)}
+                                    GObject.PARAM_READWRITE)}
     
     def __init__(self):
         ChartObject.__init__(self)
@@ -2111,7 +2114,7 @@ class Legend(ChartObject):
                 lines = graph_label.get_line_count()
                 line_height = graph_label.get_real_dimensions()[1] / lines
                 context.set_source_rgb(*color_gdk_to_cairo(graph.get_color()))
-                if type(graph.get_point_style()) != gtk.gdk.Pixbuf:
+                if type(graph.get_point_style()) != GdkPixbuf.Pixbuf:
                     draw_point(context, x + 6 + 20, y + line_height / 2, graph.get_point_size(), graph.get_point_style())
                 else:
                     draw_point_pixbuf(context, x + 6 + 20, y + line_height / 2, graph.get_point_style())

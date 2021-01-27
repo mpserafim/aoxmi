@@ -1,31 +1,56 @@
-# License: Public Domain
-# Original Author: John Finlay <finlay at moeraki.com>
+# -----------------------------------------------------------------------
+# aoxmi
+#
+# Copyright (C) 2021 mpserafim <mpserafim@mps.eti.br>
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,
+# USA.
+#
+# -----------------------------------------------------------------------
+
+# Based on work of John Finlay <finlay at moeraki.com>
 # http://www.daa.com.au/pipermail/pygtk/2004-September/008685.html
 
-import gtk
-import gobject
-import pygtk
-pygtk.require('2.0')
+from gi.repository import Gtk
+from gi.repository import Gdk
+from gi.repository import GObject
+import gi
+gi.require_version('Gtk', '3.0')
 
 
 PAD = 3
 
 
-class PixbufTextCellRenderer(gtk.GenericCellRenderer):
+class PixbufTextCellRenderer(Gtk.CellRenderer):
 
     __gproperties__ = {
-        "pixbuf": (gobject.TYPE_PYOBJECT, "Pixbuf",
-                   "Pixbuf image", gobject.PARAM_READWRITE),
-        "text": (gobject.TYPE_STRING, "Text", "Text string", None,
-                 gobject.PARAM_READWRITE),
-        'background': (gtk.gdk.Color, 'Background',
-                       'The background color', gobject.PARAM_READWRITE)
+        "pixbuf": (GObject.TYPE_PYOBJECT, "Pixbuf",
+                   "Pixbuf image", GObject.PARAM_READWRITE),
+        "text": (GObject.TYPE_STRING, "Text", "Text string", None,
+                 GObject.PARAM_READWRITE),
+        'background': (Gdk.Color, 'Background',
+                       'The background color', GObject.PARAM_READWRITE)
     }
 
     def __init__(self):
-        self.__gobject_init__()
-        self.prend = gtk.CellRendererPixbuf()
-        self.trend = gtk.CellRendererText()
+#        Gtk.Window.__init__(self)
+        GObject.GObject.__init__(self)
+        GObject.type_register(PixbufTextCellRenderer)
+
+        self.prend = Gtk.CellRendererPixbuf()
+        self.trend = Gtk.CellRendererText()
         self.percent = 0
 
     def do_set_property(self, pspec, value):
@@ -68,4 +93,4 @@ class PixbufTextCellRenderer(gtk.GenericCellRenderer):
         width = max(width, pwidth) + xpad * 2
         return xoff, yoff, width, height
 
-gobject.type_register(PixbufTextCellRenderer)
+GObject.type_register(PixbufTextCellRenderer)

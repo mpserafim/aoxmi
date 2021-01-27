@@ -1,8 +1,7 @@
 # -----------------------------------------------------------------------
-# OpenXenManager
+# aoxmi
 #
-# Copyright (C) 2009 Alberto Gonzalez Rodriguez alberto@pesadilla.org
-# Copyright (C) 2014 Daniel Lintott <daniel@serverb.co.uk>
+# Copyright (C) 2021 mpserafim <mpserafim@mps.eti.br>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -20,7 +19,7 @@
 # USA.
 #
 # -----------------------------------------------------------------------
-import gtk
+from gi.repository import Gtk
 import os
 import xml.dom.minidom
 import utils
@@ -379,7 +378,7 @@ class oxcSERVERproperties:
             if self.all['host'][host]['enabled']:
                 if host == ref:
                     path = i 
-                list.append([host, gtk.gdk.pixbuf_new_from_file(os.path.join(utils.module_path(),
+                list.append([host, GdkPixbuf.Pixbuf.new_from_file(os.path.join(utils.module_path(),
                                                                              "images/tree_connected_16.png")),
                              self.all['host'][host]['name_label'], hostmemory, ])
             i += 1
@@ -398,16 +397,16 @@ class oxcSERVERproperties:
                     name = self.all['SR'][sr]['name_label']
                 if len(self.all['SR'][sr]['PBDs']) == 0 or self.all['PBD'][self.all['SR'][sr]['PBDs'][0]]['currently_attached'] == False \
                     or len(self.all['SR'][sr]['PBDs']) > 0 and self.all['SR'][sr]["allowed_operations"].count("unplug") ==  0:
-                        list.append([sr, gtk.gdk.pixbuf_new_from_file(os.path.join(utils.module_path(),
+                        list.append([sr, GdkPixbuf.Pixbuf.new_from_file(os.path.join(utils.module_path(),
                                                                                    "images/storage_broken_16.png")),
                                      name])
                 else:
                     if sr == self.default_sr:
-                        list.append([sr, gtk.gdk.pixbuf_new_from_file(os.path.join(utils.module_path(),
+                        list.append([sr, GdkPixbuf.Pixbuf.new_from_file(os.path.join(utils.module_path(),
                                                                                    "images/storage_default_16.png")),
                                      name])
                     else:
-                        list.append([sr, gtk.gdk.pixbuf_new_from_file(os.path.join(utils.module_path(),
+                        list.append([sr, GdkPixbuf.Pixbuf.new_from_file(os.path.join(utils.module_path(),
                                                                                    "images/storage_shaped_16.png")),
                                      name])
                 i += 1

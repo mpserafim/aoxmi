@@ -1,8 +1,7 @@
 # -----------------------------------------------------------------------
-# OpenXenManager
+# aoxmi
 #
-# Copyright (C) 2009 Alberto Gonzalez Rodriguez alberto@pesadilla.org
-# Copyright (C) 2014 Daniel Lintott <daniel@serverb.co.uk>
+# Copyright (C) 2021 mpserafim <mpserafim@mps.eti.br>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -16,11 +15,12 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,
+# USA.
 #
 # -----------------------------------------------------------------------
 import datetime
-import gtk
+from gi.repository import Gtk
 from threading import Thread
 
 
@@ -365,7 +365,7 @@ class oxcWindowNewVm:
         listnewvmstorage =  self.builder.get_object("listnewvmstorage")
         selection = treenewvmstorage.get_selection()
         # Get the selected disk
-        selection.set_mode(gtk.SELECTION_SINGLE)
+        selection.set_mode(Gtk.SelectionMode.SINGLE)
         if selection.get_selected()[1] == None:
             if listnewvmstorage.__len__() > 0:
                 # Or get the first
@@ -384,7 +384,7 @@ class oxcWindowNewVm:
         treenewvmnetwork =  self.builder.get_object("treenewvmnetwork")
         listnewvmnetwork =  self.builder.get_object("listnewvmnetworks")
         selection = treenewvmnetwork.get_selection()
-        selection.set_mode(gtk.SELECTION_SINGLE)
+        selection.set_mode(Gtk.SelectionMode.SINGLE)
         if selection.get_selected()[1] == None:
             iter = listnewvmnetwork.get_iter((0,1))
         else:
@@ -448,14 +448,14 @@ class oxcWindowNewVm:
         """
         if widget.state == 2:
             for data in ['radiobutton1', 'radiobutton2', 'radiobutton3']:
-                if data == gtk.Buildable.get_name(widget): 
+                if data == Gtk.Buildable.get_name(widget): 
                     self.builder.get_object(data + "_data").set_sensitive(True)
                     if data != "radiobutton1":
                         if self.builder.get_object(data + "_data").get_active() == -1:
                              self.builder.get_object(data + "_data").set_active(0)
                 else:
                     self.builder.get_object(data + "_data").set_sensitive(False)
-        self.newvmdata['location'] = gtk.Buildable.get_name(widget) 
+        self.newvmdata['location'] = Gtk.Buildable.get_name(widget) 
     def on_networkcolumn_changed(self, widget, data=None, data2=None):
         """
         Function called when you change the "network" listbox on list of networks

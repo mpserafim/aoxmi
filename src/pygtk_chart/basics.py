@@ -1,34 +1,37 @@
 #!/usr/bin/env python
+# -----------------------------------------------------------------------
+# aoxmi
 #
-#       misc.py
+# Copyright (C) 2021 mpserafim <mpserafim@mps.eti.br>
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,
+# USA.
+#
+# -----------------------------------------------------------------------
+#
+# Based on work of Sven Festersen <sven@sven-festersen.de>
 #       
-#       Copyright 2008 Sven Festersen <sven@sven-festersen.de>
-#       
-#       This program is free software; you can redistribute it and/or modify
-#       it under the terms of the GNU General Public License as published by
-#       the Free Software Foundation; either version 2 of the License, or
-#       (at your option) any later version.
-#       
-#       This program is distributed in the hope that it will be useful,
-#       but WITHOUT ANY WARRANTY; without even the implied warranty of
-#       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#       GNU General Public License for more details.
-#       
-#       You should have received a copy of the GNU General Public License
-#       along with this program; if not, write to the Free Software
-#       Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
-#       MA 02110-1301, USA.
 """
 This module contains simple functions needed by all other modules.
-
-Author: Sven Festersen (sven@sven-festersen.de)
 """
 __docformat__ = "epytext"
 import cairo
-import gtk
+from gi.repository import Gtk
 import os
 
-import pygtk_chart
+import gi_chart
 
 def is_in_range(x, (xmin, xmax)):
     """
@@ -49,7 +52,7 @@ def get_center(rect):
     """
     Find the center point of a rectangle.
     
-    @type rect: gtk.gdk.Rectangle
+    @type rect: 
     @param rect: The rectangle.
     @return: A (x, y) tuple specifying the center point.
     """
@@ -57,16 +60,16 @@ def get_center(rect):
     
 def color_gdk_to_cairo(color):
     """
-    Convert a gtk.gdk.Color to cairo color.
+    Convert a Gdk.Color to cairo color.
     
-    @type color: gtk.gdk.Color
+    @type color: Gdk.Color
     @param color: the color to convert
     @return: a color in cairo format.
     """
     return (color.red / 65535.0, color.green / 65535.0, color.blue / 65535.0)
     
 def color_cairo_to_gdk(r, g, b):
-    return gtk.gdk.Color(int(65535 * r), int(65535 * g), int(65535 * b))
+    return Gdk.Color(int(65535 * r), int(65535 * g), int(65535 * b))
     
 def color_rgb_to_cairo(color):
     """
@@ -116,7 +119,7 @@ def gdk_color_list_from_file(filename):
         f = open(filename, "r")
         for line in f.readlines():
             line = line.strip()
-            result.append(gtk.gdk.color_parse(line))
+            result.append(Gdk.color_parse(line))
     return result
 
 def set_context_line_style(context, style):

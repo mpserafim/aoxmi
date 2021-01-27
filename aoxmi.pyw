@@ -1,8 +1,8 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 # -----------------------------------------------------------------------
-# OpenXenManager
+# aoxmi
 #
-# Copyright (C) 2014 Daniel Lintott <daniel@serverb.co.uk>
+# Copyright (C) 2021 mpserafim <mpserafim@mps.eti.br>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -20,7 +20,9 @@
 # USA.
 #
 # -----------------------------------------------------------------------
-import gtk
+import gi
+gi.require_version("Gtk", "3.0")
+from gi.repository import Gtk
 import sys
 import os
 # FIXME: rather pathetic fix for ubuntu to show menus -  GTK3 migration should
@@ -34,4 +36,4 @@ from OXM.window import oxcWindow
 if __name__ == "__main__":
     # Main function
     wine = oxcWindow()
-    gtk.main()
+    Gtk.main()

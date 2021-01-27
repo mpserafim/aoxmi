@@ -1,8 +1,7 @@
 # -----------------------------------------------------------------------
-# OpenXenManager
+# aoxmi
 #
-# Copyright (C) 2009 Alberto Gonzalez Rodriguez alberto@pesadilla.org
-# Copyright (C) 2014 Daniel Lintott <daniel@serverb.co.uk>
+# Copyright (C) 2021 mpserafim <mpserafim@mps.eti.br>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -25,7 +24,7 @@ import traceback
 import time
 import datetime
 import os
-import gtk
+from gi.repository import Gtk
 import sys
 from OXM.window import oxcWindow
 from OXM.version import __version__
@@ -78,7 +77,7 @@ def main():
         current_year))
 
     mainwindow = oxcWindow()
-    gtk.main()
+    Gtk.main()
 
 
 def install_thread_excepthook():

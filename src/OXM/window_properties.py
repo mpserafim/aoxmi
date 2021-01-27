@@ -1,8 +1,7 @@
 # -----------------------------------------------------------------------
-# OpenXenManager
+# aoxmi
 #
-# Copyright (C) 2009 Alberto Gonzalez Rodriguez alberto@pesadilla.org
-# Copyright (C) 2014 Daniel Lintott <daniel@serverb.co.uk>
+# Copyright (C) 2021 mpserafim <mpserafim@mps.eti.br>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -16,11 +15,12 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,
+# USA.
 #
 # -----------------------------------------------------------------------
 import hashlib
-import gtk
+from gi.repository import Gtk
 import xml.dom.minidom
 from os import path
 import utils
@@ -202,7 +202,7 @@ class oxcWindowProperties:
         # For different elements show or hidden menu options
         # If return false, element will be not showed, else will be showed
         if self.selected_type == "host":
-            if self.selected_widget and gtk.Buildable.get_name(self.selected_widget) == "bthostnetworkproperties":
+            if self.selected_widget and Gtk.Buildable.get_name(self.selected_widget) == "bthostnetworkproperties":
                 # If element is not on "Network" array
                 if not network.count(aka):
                     # hide it
@@ -210,13 +210,13 @@ class oxcWindowProperties:
             else:
                 if not host.count(aka):
                     return False
-        elif self.selected_widget and (gtk.Buildable.get_name(self.selected_widget) == "btstorageproperties" or
-                                       gtk.Buildable.get_name(self.selected_widget) == "btstgproperties"):
+        elif self.selected_widget and (Gtk.Buildable.get_name(self.selected_widget) == "btstorageproperties" or
+                                       Gtk.Buildable.get_name(self.selected_widget) == "btstgproperties"):
             # same
             if not vdi.count(aka):
                 return False
 
-        elif self.selected_widget and gtk.Buildable.get_name(self.selected_widget) == "menuitem_server_prop":
+        elif self.selected_widget and Gtk.Buildable.get_name(self.selected_widget) == "menuitem_server_prop":
             # same
             if not host.count(aka):
                 return False
@@ -248,7 +248,7 @@ class oxcWindowProperties:
         if self.selected_widget:
             listprop = self.builder.get_object("listprop")
             treeprop = self.builder.get_object("treeprop")
-            if gtk.Buildable.get_name(self.selected_widget) == "btstgproperties":
+            if Gtk.Buildable.get_name(self.selected_widget) == "btstgproperties":
                 liststorage = self.builder.get_object("liststg")
                 treestorage = self.builder.get_object("treestg")
                 column = 0
@@ -261,7 +261,7 @@ class oxcWindowProperties:
             ref = liststorage.get_value(iter, column)
 
             path = self.selected_prop_path
-            if gtk.Buildable.get_name(self.selected_widget) == "btstgproperties":
+            if Gtk.Buildable.get_name(self.selected_widget) == "btstgproperties":
                 ref = self.xc_servers[self.selected_host].all['VDI'][ref]['VBDs'][path[0] - 9]
                 device = self.xc_servers[self.selected_host].all['VBD'][ref]['userdevice']
                 mode = self.xc_servers[self.selected_host].all['VBD'][ref]['mode']
@@ -272,7 +272,7 @@ class oxcWindowProperties:
                 vm_ref = self.xc_servers[self.selected_host].all['VBD'][ref]['VM']
             if ref not in self.changes:
                 self.changes[ref] = {}
-            if gtk.Buildable.get_name(widget) == "combostgmode":
+            if Gtk.Buildable.get_name(widget) == "combostgmode":
                 if mode != widget.get_active_text():
                     self.changes[ref]['mode'] = widget.get_active_text()
                 else:
@@ -299,7 +299,7 @@ class oxcWindowProperties:
         if self.selected_widget:
             listprop = self.builder.get_object("listprop")
             treeprop = self.builder.get_object("treeprop")
-            if gtk.Buildable.get_name(self.selected_widget) == "btstgproperties":
+            if Gtk.Buildable.get_name(self.selected_widget) == "btstgproperties":
                 liststorage = self.builder.get_object("liststg")
                 treestorage = self.builder.get_object("treestg")
                 column = 0
@@ -311,7 +311,7 @@ class oxcWindowProperties:
             iter = selection.get_selected()[1]
             ref = liststorage.get_value(iter, column)
             path = self.selected_prop_path
-            if gtk.Buildable.get_name(self.selected_widget) == "btstgproperties":
+            if Gtk.Buildable.get_name(self.selected_widget) == "btstgproperties":
                 ref = self.xc_servers[self.selected_host].all['VDI'][ref]['VBDs'][path[0] - 9]
             bootable = self.xc_servers[self.selected_host].all['VBD'][ref]['bootable']
             if ref not in self.changes:
@@ -355,7 +355,7 @@ class oxcWindowProperties:
             else:
                 self.builder.get_object("tabprops").set_current_page(9)
             if path[0] > 8 and self.listprop.get_value(iter, 2) != "advancedoptions":
-                if gtk.Buildable.get_name(self.selected_widget) == "btstgproperties":
+                if Gtk.Buildable.get_name(self.selected_widget) == "btstgproperties":
                     liststorage = self.builder.get_object("liststg")
                     treestorage = self.builder.get_object("treestg")
                     column = 0
@@ -366,7 +366,7 @@ class oxcWindowProperties:
                 selection = treestorage.get_selection()
                 iter = selection.get_selected()[1]
                 ref = liststorage.get_value(iter, column)
-                if gtk.Buildable.get_name(self.selected_widget) == "btstgproperties":
+                if Gtk.Buildable.get_name(self.selected_widget) == "btstgproperties":
                     ref = self.xc_servers[self.selected_host].all['VDI'][ref]['VBDs'][path[0] - 9]
                     vm_ref = self.xc_servers[self.selected_host].all['VBD'][ref]['VM']
                     device = self.xc_servers[self.selected_host].all['VBD'][ref]['userdevice']
@@ -406,7 +406,7 @@ class oxcWindowProperties:
         """
         # TODO: comment code
 
-        if self.selected_widget and gtk.Buildable.get_name(self.selected_widget) == "bthostnetworkproperties":
+        if self.selected_widget and Gtk.Buildable.get_name(self.selected_widget) == "bthostnetworkproperties":
             liststorage = self.builder.get_object("listhostnetwork")
             treestorage = self.builder.get_object("treehostnetwork")
             selection = treestorage.get_selection()
@@ -444,9 +444,9 @@ class oxcWindowProperties:
             if change:
                 self.xc_servers[self.selected_host].set_network_other_config(self.selected_ref, other_config)
 
-        elif self.selected_widget and (gtk.Buildable.get_name(self.selected_widget) == "btstgproperties" or
-                                       gtk.Buildable.get_name(self.selected_widget) == "btstorageproperties"):
-            if gtk.Buildable.get_name(self.selected_widget) == "btstgproperties":
+        elif self.selected_widget and (Gtk.Buildable.get_name(self.selected_widget) == "btstgproperties" or
+                                       Gtk.Buildable.get_name(self.selected_widget) == "btstorageproperties"):
+            if Gtk.Buildable.get_name(self.selected_widget) == "btstgproperties":
                 liststorage = self.builder.get_object("liststg")
                 treestorage = self.builder.get_object("treestg")
                 column = 0
@@ -457,7 +457,7 @@ class oxcWindowProperties:
             selection = treestorage.get_selection()
             iter = treestorage.get_selection().get_selected()[1]
             ref = liststorage.get_value(iter, column)
-            if gtk.Buildable.get_name(self.selected_widget) == "btstgproperties":
+            if Gtk.Buildable.get_name(self.selected_widget) == "btstgproperties":
                 vdi_ref = ref
             else:
                 vdi_ref = self.xc_servers[self.selected_host].all['VBD'][ref]['VDI']
@@ -495,7 +495,7 @@ class oxcWindowProperties:
                 self.xc_servers[self.selected_host].set_vdi_other_config(self.selected_ref, other_config)
 
         elif self.selected_type == "host" or \
-                (self.selected_widget and gtk.Buildable.get_name(self.selected_widget) == "menuitem_server_prop"):
+                (self.selected_widget and Gtk.Buildable.get_name(self.selected_widget) == "menuitem_server_prop"):
             vm = self.xc_servers[self.selected_host].all['host'][self.selected_ref]
             tb = self.builder.get_object("txtpropvmdesc").get_buffer()
             if "syslog_destination" in vm["logging"] == self.builder.get_object("radiologlocal").get_active():
@@ -693,7 +693,7 @@ class oxcWindowProperties:
         treeprop.set_cursor((0,), treeprop.get_column(0))
         if treeprop.get_selection():
             treeprop.get_selection().select_path((0,))
-        if gtk.Buildable.get_name(widget) == "btstorageproperties":
+        if Gtk.Buildable.get_name(widget) == "btstorageproperties":
             liststorage = self.builder.get_object("listvmstorage")
             treestorage = self.builder.get_object("treevmstorage")
             column = 10
@@ -711,7 +711,7 @@ class oxcWindowProperties:
             iter = selection.get_selected()[1]
             ref = liststorage.get_value(iter, column)
             # print self.xc_servers[self.selected_host].all['VDI'][ref]
-            if gtk.Buildable.get_name(widget) == "btstgproperties":
+            if Gtk.Buildable.get_name(widget) == "btstgproperties":
                 vdi_ref = ref
             else:
                 vdi_ref = self.xc_servers[self.selected_host].all['VBD'][ref]['VDI']
@@ -735,7 +735,7 @@ class oxcWindowProperties:
             listvdilocation = self.builder.get_object("listvdilocation")
             pos = self.xc_servers[self.selected_host].fill_vdi_location(vdi_sr, listvdilocation)
             self.builder.get_object("spinvdisize").set_sensitive(vdi['allowed_operations'].count("resize"))
-            if gtk.Buildable.get_name(widget) == "btstgproperties":
+            if Gtk.Buildable.get_name(widget) == "btstgproperties":
                 i = 9
                 vbds = len(self.xc_servers[self.selected_host].all['VDI'][ref]['VBDs'])
                 if vbds:
@@ -748,7 +748,7 @@ class oxcWindowProperties:
                     vm_ref = self.xc_servers[self.selected_host].all['VBD'][ref]['VM']
                     device = self.xc_servers[self.selected_host].all['VBD'][ref]['userdevice']
                     mode = self.xc_servers[self.selected_host].all['VBD'][ref]['mode']
-                    listprop.append([gtk.gdk.pixbuf_new_from_file(path.join(utils.module_path(),
+                    listprop.append([GdkPixbuf.Pixbuf.new_from_file(path.join(utils.module_path(),
                                                                             "images/prop_stgvm.png")), "<b>NAME</b>",
                                      "stgvm", i])
                     iter = listprop.get_iter((i,))
@@ -764,7 +764,7 @@ class oxcWindowProperties:
                 vm_ref = self.xc_servers[self.selected_host].all['VBD'][ref]['VM']
                 device = self.xc_servers[self.selected_host].all['VBD'][ref]['userdevice']
                 mode = self.xc_servers[self.selected_host].all['VBD'][ref]['mode']
-                listprop.append([gtk.gdk.pixbuf_new_from_file(path.join(utils.module_path(),
+                listprop.append([GdkPixbuf.Pixbuf.new_from_file(path.join(utils.module_path(),
                                                                         "images/prop_stgvm.png")), "<b>NAME</b>",
                                  "stgvm", 9])
                 iter = listprop.get_iter((9,))
@@ -814,7 +814,7 @@ class oxcWindowProperties:
         treeprop = self.builder.get_object("treeprop")
         treeprop.set_cursor((0,), treeprop.get_column(0))
         treeprop.get_selection().select_path((0,))
-        if gtk.Buildable.get_name(widget) == "menuitem_server_prop":
+        if Gtk.Buildable.get_name(widget) == "menuitem_server_prop":
             ref = self.treestore.get_value(self.treestore.iter_parent(self.selected_iter), 6)
             if ref in self.xc_servers[self.selected_host].all['host']:
                 vm = self.xc_servers[self.selected_host].all['host'][ref]
@@ -1024,21 +1024,21 @@ class oxcWindowProperties:
             for node in dom.getElementsByTagName("CustomFieldDefinition"):
                 name = node.attributes.getNamedItem("name").value
                 if name not in self.vboxchildtext:
-                    vboxframe = gtk.Frame()
-                    vboxframe.modify_bg(gtk.STATE_NORMAL, gtk.gdk.color_parse("white"))
+                    vboxframe = Gtk.Frame()
+                    vboxframe.modify_bg(Gtk.StateType.NORMAL, Gdk.color_parse("white"))
                     vboxframe.set_size_request(500, 30)
-                    vboxchild = gtk.Fixed()
+                    vboxchild = Gtk.Fixed()
                     vboxchild.set_size_request(500, 30)
-                    vboxevent = gtk.EventBox()
+                    vboxevent = Gtk.EventBox()
                     vboxevent.add(vboxchild)
-                    vboxchildlabel = gtk.Label()
+                    vboxchildlabel = Gtk.Label()
                     vboxchildlabel.set_selectable(True)
                     vboxchildlabel.set_label(name)
                     vboxchild.put(vboxchildlabel, 5, 5)
-                    self.vboxchildtext[name] = gtk.Entry()
+                    self.vboxchildtext[name] = Gtk.Entry()
                     self.vboxchildtext[name].set_size_request(200, 20)
                     vboxchild.put(self.vboxchildtext[name], 300, 5)
-                    vboxevent.modify_bg(gtk.STATE_NORMAL, gtk.gdk.color_parse("white"))
+                    vboxevent.modify_bg(Gtk.StateType.NORMAL, Gdk.color_parse("white"))
                     self.builder.get_object("vboxcustomfields").pack_start(vboxevent, False, False, 0)
                     self.builder.get_object("vboxcustomfields").show_all()
         if add:
@@ -1054,11 +1054,11 @@ class oxcWindowProperties:
         # TODO: comment code
         self.propmodelfilter.refilter()
         self.builder.get_object("tabprops").set_current_page(0)
-        if gtk.Buildable.get_name(widget) == "btstorageproperties" or gtk.Buildable.get_name(widget) == "btstgproperties":
+        if Gtk.Buildable.get_name(widget) == "btstorageproperties" or Gtk.Buildable.get_name(widget) == "btstgproperties":
             other_config = self.fill_btstorage_properties(widget)
-        elif gtk.Buildable.get_name(widget) == "bthostnetworkproperties":
+        elif Gtk.Buildable.get_name(widget) == "bthostnetworkproperties":
             other_config = self.fill_host_network_properties(widget)
-        elif gtk.Buildable.get_name(widget) == "menuitem_server_prop" or self.selected_type == "host":
+        elif Gtk.Buildable.get_name(widget) == "menuitem_server_prop" or self.selected_type == "host":
             other_config = self.fill_server_properties(widget)
         elif self.selected_type == "storage":
             other_config = self.fill_storage_properties()
