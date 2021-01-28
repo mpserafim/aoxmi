@@ -405,7 +405,7 @@ class oxcSERVER(oxcSERVERvm, oxcSERVERhost, oxcSERVERproperties,
                         guest_metrics, {'networks': ()}).
                     get('networks', ()))
                 addresses = [
-                    addr for key, addr in net_addrs.items()
+                    addr for key, addr in net_addrs
                     if key.startswith(vif['device'] + '/ip')
                 ]
 

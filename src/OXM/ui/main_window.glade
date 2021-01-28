@@ -4954,6 +4954,7 @@ Reboot</property>
                                                     </child>
                                                   </object>
                                                 </child>
+                                                <signal name="button-press-event" handler="on_treevmsnapshots_button_press_event" swapped="no"/>
                                               </object>
                                             </child>
                                           </object>
