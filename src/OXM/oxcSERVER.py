@@ -1149,7 +1149,7 @@ class oxcSERVER(oxcSERVERvm, oxcSERVERhost, oxcSERVERproperties,
                                          ro, "0 (Lowest) ",
                                          str(vbd['currently_attached']),
                                          "/dev/" + vbd['device'], vbd['VDI'],
-                                         vbd_ref, vbd['bootable']))
+                                         vbd_ref, str(vbd['bootable'])))
 
     def fill_vm_storage_dvd(self, ref, list):
         i = 0
