@@ -136,7 +136,6 @@ class oxcWindowVMSnapshot:
         y = int(event.y)
         time = event.time
         pthinfo = widget.get_path_at_pos(x, y)
-        print("Aqui\n")
         if pthinfo is not None:
            path, col, cellx, celly = pthinfo
            widget.grab_focus()
