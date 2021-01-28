@@ -447,21 +447,10 @@ class oxcSERVER(oxcSERVERvm, oxcSERVERhost, oxcSERVERproperties,
             all_snapshots = self.all['vms'][uuid]['snapshots']
             for snapshot_uuid in all_snapshots:
                 snapshot_name = self.all['vms'][snapshot_uuid]['name_label']
+                snapshot_description = self.all['vms'][snapshot_uuid]['name_description']
                 snapshot_time = self.format_date(
                     self.all['vms'][snapshot_uuid]['snapshot_time'])
-                snapshot_of = self.all['vms'][snapshot_uuid]['snapshot_of']
-                snapshot_size = 0
-                for vbd in self.all['vms'][snapshot_uuid]['VBDs']:
-                    vbd_data = self.all['VBD'][vbd]
-                    if vbd_data['type'] == 'Disk':
-                        snapshot_size += int(self.connection.VDI.get_record(
-                            self.session_uuid,
-                            vbd_data['VDI'])['Value']['physical_utilisation'])
-                list.append([snapshot_uuid, "<b>" + snapshot_name +
-                             "</b>\n\nTaken on: " + str(snapshot_time) +
-                             "\n\nSize: " + self.convert_bytes(snapshot_size) +
-                             "\n\n" + "Used by: " + self.wine.selected_name +
-                             "\n"])
+                list.append((snapshot_uuid, str(snapshot_time), snapshot_name, snapshot_description))
 
     def update_performance(self, uuid, ref, ip, host=False, period=5):
         # Default three hours of period

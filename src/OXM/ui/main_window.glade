@@ -1252,7 +1252,11 @@
     <columns>
       <!-- column-name ref -->
       <column type="gchararray"/>
-      <!-- column-name text -->
+      <!-- column-name date -->
+      <column type="gchararray"/>
+      <!-- column-name name -->
+      <column type="gchararray"/>
+      <!-- column-name description -->
       <column type="gchararray"/>
     </columns>
   </object>
@@ -4940,21 +4944,42 @@ Reboot</property>
                                                 <property name="visible">True</property>
                                                 <property name="can_focus">True</property>
                                                 <property name="model">listvmsnapshots</property>
-                                                <property name="headers_visible">False</property>
                                                 <property name="headers_clickable">False</property>
                                                 <property name="search_column">0</property>
+                                                <signal name="button-press-event" handler="on_treevmsnapshots_button_press_event" swapped="no"/>
                                                 <child>
                                                   <object class="GtkTreeViewColumn" id="treeviewcolumn17">
-                                                    <property name="title">column</property>
+                                                    <property name="title">Date</property>
                                                     <child>
                                                       <object class="GtkCellRendererText" id="cellrenderertext16"/>
                                                       <attributes>
-                                                        <attribute name="markup">1</attribute>
+                                                        <attribute name="text">1</attribute>
                                                       </attributes>
                                                     </child>
                                                   </object>
                                                 </child>
-                                                <signal name="button-press-event" handler="on_treevmsnapshots_button_press_event" swapped="no"/>
+                                                <child>
+                                                  <object class="GtkTreeViewColumn" id="treeviewcolumn40">
+                                                    <property name="title">Name</property>
+                                                    <child>
+                                                      <object class="GtkCellRendererText" id="cellrenderertext39"/>
+                                                      <attributes>
+                                                        <attribute name="text">2</attribute>
+                                                      </attributes>
+                                                    </child>
+                                                  </object>
+                                                </child>
+                                                <child>
+                                                  <object class="GtkTreeViewColumn" id="treeviewcolumn42">
+                                                    <property name="title">Description</property>
+                                                    <child>
+                                                      <object class="GtkCellRendererText" id="cellrenderertext41"/>
+                                                      <attributes>
+                                                        <attribute name="text">3</attribute>
+                                                      </attributes>
+                                                    </child>
+                                                  </object>
+                                                </child>
                                               </object>
                                             </child>
                                           </object>
@@ -8146,7 +8171,7 @@ Reboot</property>
                                                 <property name="can_focus">True</property>
                                                 <property name="model">listhostnics</property>
                                                 <property name="headers_clickable">False</property>
-                                                <property name="search_column">0</property>
+                                                <property name="search_column">3</property>
                                                 <property name="hover_expand">True</property>
                                                 <signal name="button-press-event" handler="on_treehostnics_button_press_event" swapped="no"/>
                                                 <child>
@@ -10621,13 +10646,9 @@ XenServer Tools needs to be installed.</property>
                           </packing>
                         </child>
                         <child type="tab">
-                          <object class="GtkLabel" id="Maps">
-                            <property name="visible">True</property>
+                          <object class="GtkLabel" id="Home">
                             <property name="can_focus">False</property>
-                            <property name="xalign">0</property>
-                            <property name="yalign">0</property>
-                            <property name="label" translatable="yes">Maps</property>
-                            <property name="single_line_mode">True</property>
+                            <property name="label" translatable="yes">Home</property>
                           </object>
                           <packing>
                             <property name="position">20</property>
@@ -10911,9 +10932,13 @@ XenServer Tools needs to be installed.</property>
                           </packing>
                         </child>
                         <child type="tab">
-                          <object class="GtkLabel" id="Home">
+                          <object class="GtkLabel" id="Maps">
+                            <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">Home</property>
+                            <property name="xalign">0</property>
+                            <property name="yalign">0</property>
+                            <property name="label" translatable="yes">Maps</property>
+                            <property name="single_line_mode">True</property>
                           </object>
                           <packing>
                             <property name="position">20</property>
