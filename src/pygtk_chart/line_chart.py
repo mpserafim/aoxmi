@@ -30,10 +30,11 @@ __docformat__ = "epytext"
 from gi.repository import GObject
 import cairo
 from gi.repository import Gtk
+from gi.repository import GdkPixbuf
 import math
 import os
 
-import gi_chart
+import pygtk_chart
 from pygtk_chart.basics import *
 from pygtk_chart.chart_object import ChartObject
 from pygtk_chart import chart
@@ -338,6 +339,7 @@ class LineChart(chart.Chart):
         self.yaxis.connect("appearance_changed", self._cb_appearance_changed)
         self.grid.connect("appearance_changed", self._cb_appearance_changed)
         self.legend.connect("appearance_changed", self._cb_appearance_changed)
+        self.connect("draw", self.draw)
         
     def __iter__(self):
         for name, graph in self.graphs.iteritems():
@@ -379,7 +381,7 @@ class LineChart(chart.Chart):
         self.xaxis.draw(context, rect, self.yaxis)
         self.yaxis.draw(context, rect, self.xaxis)
 
-    def draw(self, context):
+    def draw(self, darea, context):
         """
         Draw the widget. This method is called automatically. Don't call it
         yourself. If you want to force a redrawing of the widget, call
@@ -404,7 +406,7 @@ class LineChart(chart.Chart):
         self._range_calc.prepare_tics(graph_rect, self.xaxis, self.yaxis)
         #initial context settings: line width & font
         context.set_line_width(1)
-        font = Gtk.Label().style.font_desc.get_family()
+        font = Gtk.Label().get_style().font_desc.get_family()
         context.select_font_face(font,cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_NORMAL)
 
         # self.draw_basics(context, rect)

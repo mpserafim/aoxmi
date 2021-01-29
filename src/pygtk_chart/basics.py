@@ -29,9 +29,9 @@ This module contains simple functions needed by all other modules.
 __docformat__ = "epytext"
 import cairo
 from gi.repository import Gtk
+from gi.repository import Gdk
 import os
-
-import gi_chart
+import pygtk_chart
 
 def is_in_range(x, (xmin, xmax)):
     """

@@ -27,11 +27,14 @@
 Contains the Label class.
 """
 import cairo
+import gi
 from gi.repository import GObject
 from gi.repository import Gtk
+from gi.repository import Gdk
 import math
 from gi.repository import Pango
-import gi
+from gi.repository import PangoCairo
+
 
 from pygtk_chart import basics
 from pygtk_chart.chart_object import ChartObject
@@ -175,7 +178,7 @@ class Label(ChartObject):
         self._underline = underline
         self._anchor = anchor
         self._rotation = 0
-        self._color = Gdk.Color()
+        self._color = Gdk.Color(0,0,0)
         self._max_width = max_width
         self._fixed = fixed
         self._wrap = True
@@ -263,10 +266,10 @@ class Label(ChartObject):
         pango_context = self._context
         
         attrs = Pango.AttrList()
-        attrs.insert(Pango.AttrWeight(self._weight, 0, len(self._text)))
-        attrs.insert(Pango.AttrStyle(self._slant, 0, len(self._text)))
-        attrs.insert(Pango.AttrUnderline(self._underline, 0,
-                        len(self._text)))
+        #attrs.insert(Pango.AttrWeight(self._weight, 0, len(self._text)))
+        #attrs.insert(pango.AttrStyle(self._slant, 0, len(self._text)))
+        #attrs.insert(pango.pango.AttrUnderline(self._underline, 0,
+        #                len(self._text)))
         if self._size != None:
             attrs.insert(Pango.AttrSize(1000 * self._size, 0,
                             len(self._text)))
@@ -274,7 +277,7 @@ class Label(ChartObject):
         if self._layout == None:
             self._layout = Pango.Layout(pango_context)
         layout = self._layout
-        layout.set_text(self._text)
+        layout.set_text(self._text, len(self._text))
         layout.set_attributes(attrs)
         
         #find out where to draw the layout and calculate the maximum width
@@ -322,7 +325,8 @@ class Label(ChartObject):
         context.move_to(x, y)
         context.rotate(angle)
         context.set_source_rgb(*basics.color_gdk_to_cairo(self._color))
-        context.show_layout(layout)
+        #context.show_layout(layout)
+        PangoCairo.show_layout(context, layout)
         context.rotate(-angle)
         context.stroke()
         

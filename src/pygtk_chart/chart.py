@@ -38,12 +38,11 @@ All colors that pygtkChart uses are Gdk.Colors as used by PyGTK.
 """
 __docformat__ = "epytext"
 import cairo
+import gi
 from gi.repository import GObject
 from gi.repository import Gtk
 import os
 from gi.repository import Pango
-import pangocairo
-import gi
 
 from pygtk_chart.chart_object import ChartObject
 from pygtk_chart.basics import *
@@ -109,7 +108,7 @@ class Chart(Gtk.DrawingArea):
         self.title.connect("appearance-changed", self._cb_appearance_changed)
         
         self.add_events(Gdk.EventMask.BUTTON_PRESS_MASK|Gdk.EventMask.SCROLL_MASK|Gdk.EventMask.POINTER_MOTION_MASK)
-        self.connect("expose_event", self._cb_expose_event)
+        #self.connect("expose_event", self._cb_expose_event)
         self.connect("button_press_event", self._cb_button_pressed)
         self.connect("motion-notify-event", self._cb_motion_notify)
         

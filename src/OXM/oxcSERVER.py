@@ -42,7 +42,7 @@ from oxcSERVER_alerts import *
 from oxcSERVER_addserver import *
 from oxcSERVER_newvm import *
 from oxcSERVER_menuitem import *
-#from pygtk_chart import line_chart
+from pygtk_chart import line_chart
 from rrd import RRD, XPORT
 import put
 import rrdinfo
@@ -548,8 +548,11 @@ class oxcSERVER(oxcSERVERvm, oxcSERVERhost, oxcSERVERproperties,
                 chart["cpu"].add_graph(graph[key])
 
         chart["cpu"].set_size_request(len(data)*20, 250)
-        GObject.idle_add(lambda: self.wine.builder.get_object("scrwin_cpuusage").add(chart["cpu"]) and False)
-        GObject.idle_add(lambda: self.wine.builder.get_object("scrwin_cpuusage").show_all() and False)
+        cont1 = self.wine.builder.get_object("scrwin_cpuusage")
+        for el in cont1.get_children():
+            cont1.remove(el);
+        cont1.add(chart["cpu"]);
+        cont1.show_all()
 
         # Memory
         if "memory_internal_free" in rrdinfo and "memory" in rrdinfo:
@@ -564,8 +567,11 @@ class oxcSERVER(oxcSERVERvm, oxcSERVERhost, oxcSERVERproperties,
             chart["mem"].add_graph(graph["mem"])
             chart["mem"].set_size_request(len(data)*20, 250)
 
-            GObject.idle_add(lambda: self.wine.builder.get_object("scrwin_memusage").add(chart["mem"]) and False)
-            GObject.idle_add(lambda: self.wine.builder.get_object("scrwin_memusage").show_all() and False)
+            cont2 = self.wine.builder.get_object("scrwin_memusage")
+            for el in cont2.get_children():
+                cont2.remove(el)
+            GObject.idle_add(lambda: cont2.add(chart["mem"]) and False)
+            GObject.idle_add(lambda: cont2.show_all() and False)
         elif "memory_total_kib" in rrdinfo \
                 and "xapi_free_memory_kib" in rrdinfo:
             chart["mem"].set_yrange(
@@ -579,14 +585,20 @@ class oxcSERVER(oxcSERVERvm, oxcSERVERhost, oxcSERVERproperties,
             chart["mem"].add_graph(graph["mem"])
             chart["mem"].set_size_request(len(data)*20, 250)
 
-            GObject.idle_add(lambda: self.wine.builder.get_object("scrwin_memusage").add(chart["mem"]) and False)
-            GObject.idle_add(lambda: self.wine.builder.get_object("scrwin_memusage").show_all() and False)
+            cont2 = self.wine.builder.get_object("scrwin_memusage")
+            for el in cont2.get_children():
+                cont2.remove(el)
+            GObject.idle_add(lambda: cont2.add(chart["mem"]) and False)
+            GObject.idle_add(lambda: cont2.show_all() and False)
 
         else:
             label = Gtk.Label()
             label.set_markup("<b>No data available</b>")
-            GObject.idle_add(lambda: self.wine.builder.get_object("scrwin_memusage").add(label) and False)
-            GObject.idle_add(lambda: self.wine.builder.get_object("scrwin_memusage").show_all() and False)
+            cont2 = self.wine.builder.get_object("scrwin_memusage")
+            for el in cont2.get_children():
+                cont2.remove(el)
+            GObject.idle_add(lambda: cont2.add(label) and False)
+            GObject.idle_add(lambda: cont2.show_all() and False)
 
         # Network
         max_value = 0
@@ -605,13 +617,19 @@ class oxcSERVER(oxcSERVERvm, oxcSERVERhost, oxcSERVERproperties,
             chart["vif"].set_yrange((0, max_value))
             chart["vif"].set_size_request(len(data)*20, 250)
 
-            GObject.idle_add(lambda: self.wine.builder.get_object("scrwin_netusage").add(chart["vif"]) and False)
-            GObject.idle_add(lambda: self.wine.builder.get_object("scrwin_netusage").show_all() and False)
+            cont3 = self.wine.builder.get_object("scrwin_netusage")
+            for el in cont3.get_children():
+                cont3.remove(el)
+            GObject.idle_add(lambda: cont3.add(chart["vif"]) and False)
+            GObject.idle_add(lambda: cont3.show_all() and False)
         else:
             label = Gtk.Label()
             label.set_markup("<b>No data available</b>")
-            GObject.idle_add(lambda: self.wine.builder.get_object("scrwin_netusage").add(label) and False)
-            GObject.idle_add(lambda: self.wine.builder.get_object("scrwin_netusage").show_all() and False)
+            cont3 = self.wine.builder.get_object("scrwin_netusage")
+            for el in cont3.get_children():
+                cont3.remove(el)
+            GObject.idle_add(lambda: cont3.add(label) and False)
+            GObject.idle_add(lambda: cont3.show_all() and False)
 
         # Disk
         if not host:
@@ -631,8 +649,11 @@ class oxcSERVER(oxcSERVERvm, oxcSERVERhost, oxcSERVERproperties,
             chart["vbd"].set_yrange((0, max_value))
             chart["vbd"].set_size_request(len(data)*20, 250)
             if data:
-                GObject.idle_add(lambda: self.wine.builder.get_object("scrwin_diskusage").add(chart["vbd"]) and False)
-                GObject.idle_add(lambda: self.wine.builder.get_object("scrwin_diskusage").show_all() and False)
+                cont4 = self.wine.builder.get_object("scrwin_diskusage")
+                for el in cont4.get_children():
+                    cont4.remove(el)
+                GObject.idle_add(lambda: cont4.add(chart["vbd"]) and False)
+                GObject.idle_add(lambda: cont4.show_all() and False)
 
         if max_value == 0:  # TODO: What's this for?
             max_value = 1
